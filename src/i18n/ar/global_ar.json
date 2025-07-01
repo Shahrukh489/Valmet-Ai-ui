@@ -1,0 +1,44 @@
+{
+  "navigation": {
+    "home": "الرئيسية",
+    "columnConfigurator": "منسق الأعمدة",
+    "searchParts": "البحث عن القطع",
+    "managerPortal": "بوابة المدير",
+    "reportBug": "الإبلاغ عن خطأ",
+    "cart": "السلة",
+    "logout": "تسجيل الخروج",
+    "language": "اللغة",
+    "helpSupport": "المساعدة والدعم",
+    "myAccount": "حسابي"
+  },
+  "dashboard": {
+    "title": "لوحة التحليلات",
+    "subtitle": "راقب أداء عملك والمقاييس الرئيسية",
+    "totalSales": "إجمالي المبيعات",
+    "totalQuotations": "إجمالي عروض الأسعار",
+    "totalRevenue": "إجمالي الإيرادات",
+    "categoryDistribution": "توزيع الفئات",
+    "salesTrend": "اتجاه المبيعات",
+    "topSellingParts": "أكثر القطع مبيعاً",
+    "recentQuotes": "عروض الأسعار الأخيرة"
+  },
+  "reportBug": {
+    "title": "الإبلاغ عن خطأ",
+    "subtitle": "ساعدنا في التحسين من خلال الإبلاغ عن أي مشاكل تواجهها. سنراجع تقريرك ونتواصل معك قريباً.",
+    "bugTitle": "عنوان الخطأ",
+    "description": "الوصف",
+    "severity": "مستوى الخطورة",
+    "reporterEmail": "بريد المُبلغ الإلكتروني",
+    "submit": "إرسال تقرير الخطأ"
+  },
+  "itemDetails": {
+    "title": "تفاصيل العنصر",
+    "addToInvoice": "إضافة إلى الفاتورة",
+    "currentPrice": "السعر الحالي",
+    "basicInformation": "المعلومات الأساسية",
+    "pricingCosts": "الأسعار والتكاليف",
+    "categories": "الفئات",
+    "statusClassification": "الحالة والتصنيف",
+    "additionalInformation": "معلومات إضافية"
+  }
+}

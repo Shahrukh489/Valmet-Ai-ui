@@ -1,0 +1,44 @@
+{
+  "navigation": {
+    "home": "Home",
+    "columnConfigurator": "Column Configurator",
+    "searchParts": "Search Parts",
+    "managerPortal": "Manager Portal",
+    "reportBug": "Report a Bug",
+    "cart": "Cart",
+    "logout": "Logout",
+    "language": "Language",
+    "helpSupport": "Help & Support",
+    "myAccount": "My Account"
+  },
+  "dashboard": {
+    "title": "Analytics Dashboard",
+    "subtitle": "Monitor your business performance and key metrics",
+    "totalSales": "Total Sales",
+    "totalQuotations": "Total Quotations",
+    "totalRevenue": "Total Revenue",
+    "categoryDistribution": "Category Distribution",
+    "salesTrend": "Sales Trend",
+    "topSellingParts": "Top Selling Parts",
+    "recentQuotes": "Recent Quotes"
+  },
+  "reportBug": {
+    "title": "Report a Bug",
+    "subtitle": "Help us improve by reporting any issues you encounter. We'll review your report and get back to you soon.",
+    "bugTitle": "Bug Title",
+    "description": "Description",
+    "severity": "Severity Level",
+    "reporterEmail": "Reporter Email",
+    "submit": "Submit Bug Report"
+  },
+  "itemDetails": {
+    "title": "Item Details",
+    "addToInvoice": "Add to Invoice",
+    "currentPrice": "Current Price",
+    "basicInformation": "Basic Information",
+    "pricingCosts": "Pricing & Costs",
+    "categories": "Categories",
+    "statusClassification": "Status & Classification",
+    "additionalInformation": "Additional Information"
+  }
+}

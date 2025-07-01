@@ -1,0 +1,29 @@
+/* Allow natural document flow for scrolling */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    /* Removed overflow: hidden to allow scrolling */
+}
+
+/* Ensure Base container takes full height */
+.base-container.no-padding {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    /* Removed overflow: hidden to allow scrolling */
+    flex-grow: 1;
+    /* Expands to fill space */
+}
+
+/* Ensure that landing page does not cause extra height */
+.landing-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Center content if needed */
+}

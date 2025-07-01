@@ -1,0 +1,44 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "columnConfigurator": "Spalten-Konfigurator",
+    "searchParts": "Teile suchen",
+    "managerPortal": "Manager-Portal",
+    "reportBug": "Fehler melden",
+    "cart": "Warenkorb",
+    "logout": "Abmelden",
+    "language": "Sprache",
+    "helpSupport": "Hilfe & Support",
+    "myAccount": "Mein Konto"
+  },
+  "dashboard": {
+    "title": "Analytics-Dashboard",
+    "subtitle": "Überwachen Sie Ihre Geschäftsleistung und wichtigsten Kennzahlen",
+    "totalSales": "Gesamtumsatz",
+    "totalQuotations": "Gesamtangebote",
+    "totalRevenue": "Gesamterlös",
+    "categoryDistribution": "Kategorieverteilung",
+    "salesTrend": "Verkaufstrend",
+    "topSellingParts": "Meistverkaufte Teile",
+    "recentQuotes": "Aktuelle Angebote"
+  },
+  "reportBug": {
+    "title": "Fehler melden",
+    "subtitle": "Helfen Sie uns zu verbessern, indem Sie Probleme melden. Wir werden Ihren Bericht prüfen und uns bald bei Ihnen melden.",
+    "bugTitle": "Fehlertitel",
+    "description": "Beschreibung",
+    "severity": "Schweregrad",
+    "reporterEmail": "Reporter-E-Mail",
+    "submit": "Fehlerbericht senden"
+  },
+  "itemDetails": {
+    "title": "Artikeldetails",
+    "addToInvoice": "Zur Rechnung hinzufügen",
+    "currentPrice": "Aktueller Preis",
+    "basicInformation": "Grundinformationen",
+    "pricingCosts": "Preise & Kosten",
+    "categories": "Kategorien",
+    "statusClassification": "Status & Klassifizierung",
+    "additionalInformation": "Zusätzliche Informationen"
+  }
+}

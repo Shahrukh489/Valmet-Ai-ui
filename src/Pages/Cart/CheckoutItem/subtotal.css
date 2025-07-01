@@ -1,0 +1,35 @@
+.subtotal{
+   
+    
+    
+    width: 400px;
+    height: 110px;
+    padding: 30px;
+    background-color:#212F3C;
+    color: white;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 100px;
+    float: right;
+    margin-right: 20px;
+}
+
+.total {
+    margin-left: 5px;
+}
+
+
+
+.subtotal > button {
+    background: #f0c14b;
+    border-radius: 2px;
+    width: 100%;
+    height: 30px;
+    border: 1px solid;
+    margin-top: 10px;
+    float: right;
+    font-size: 12px;
+    border-color: #a88734 #9c7e31 #846a29;
+    color: #111;
+
+}

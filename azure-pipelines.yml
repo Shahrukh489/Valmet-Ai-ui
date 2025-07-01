@@ -1,0 +1,51 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+pool:
+  name: 'selfhosted-agentpool-winserver2022'  # Specify the self-hosted agent pool
+
+variables:
+  applicationName: 'wea-spt-use-dv-web-001' # App Service Name
+
+steps:
+# Step 1: Install Node.js
+- task: UseNode@1
+  inputs:
+    version: '16.x'  # Use the version of Node.js required by your project (e.g., 16.x or 18.x)
+
+# Step 2: Install dependencies
+- script: |
+    npm install
+  displayName: 'Install Dependencies'
+
+# Step 3: Build the project
+- script: |
+    npm run build
+  displayName: 'Build Project'
+
+# Step 4: Publish build artifacts
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: 'dist'  # Change 'dist' to your build output folder, as defined by your Vite or React configuration
+    artifactName: 'webapp'
+    publishLocation: 'Container'
+
+- script: |
+    ls $(System.DefaultWorkingDirectory)/dist
+    echo Enumerating pipeline workspace
+    ls $(Pipeline.Workspace)/s/
+  displayName: 'Testing container location'
+
+# Step 5: Deploy to Azure App Service
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'aar-spt-spot-001-dv'
+    appType: 'webAppLinux'  # Use 'webAppLinux' or 'webApp' depending on the type of App Service you're deploying to
+    WebAppName: '$(applicationName)'
+    package: '$(System.DefaultWorkingDirectory)/dist'

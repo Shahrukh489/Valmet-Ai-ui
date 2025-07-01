@@ -1,0 +1,507 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Microsoft Azure Professional Dark Theme */
+    --background: 213 27% 9%;           /* Deep charcoal #141a21 */
+    --foreground: 210 40% 98%;          /* Pure white #fafbfc */
+    
+    /* Surface Colors */
+    --surface-primary: 213 27% 12%;     /* Dark slate #1a242e */
+    --surface-secondary: 213 27% 15%;   /* Medium slate #212c38 */
+    --surface-tertiary: 213 27% 18%;    /* Light slate #283442 */
+    --surface-elevated: 213 27% 21%;    /* Elevated slate #2f3d4c */
+    
+    /* Card System - Shadcn/UI compatible */
+    --card: 213 27% 12%;                /* Card background */
+    --card-foreground: 210 40% 98%;     /* Card text */
+    
+    /* Popover & Modal - Shadcn/UI compatible */
+    --popover: 213 27% 15%;
+    --popover-foreground: 210 40% 98%;
+    
+    /* Azure Brand Colors - Shadcn/UI compatible */
+    --primary: 210 100% 60%;            /* Azure blue #3399ff */
+    --primary-foreground: 210 40% 98%;
+    --primary-hover: 210 100% 55%;      /* Hover blue #2985e6 */
+    
+    /* Secondary Colors - Shadcn/UI compatible */
+    --secondary: 213 27% 15%;
+    --secondary-foreground: 210 40% 98%;
+    
+    /* Accent Colors - Shadcn/UI compatible */
+    --accent: 213 27% 18%;
+    --accent-foreground: 210 40% 98%;
+    
+    /* Muted Colors - Shadcn/UI compatible */
+    --muted: 213 27% 15%;
+    --muted-foreground: 213 27% 65%;    /* Medium gray #9ca8b4 */
+    
+    /* Status Colors */
+    --success: 120 60% 50%;             /* Success green #4caf50 */
+    --success-foreground: 210 40% 98%;
+    --warning: 45 100% 60%;             /* Warning amber #ffb300 */
+    --warning-foreground: 213 27% 9%;
+    --destructive: 0 84% 60%;           /* Error red #f44336 */
+    --destructive-foreground: 210 40% 98%;
+    --info: 200 100% 60%;               /* Info blue #00bcd4 */
+    --info-foreground: 210 40% 98%;
+    
+    /* Border & Form Elements - Shadcn/UI compatible */
+    --border: 213 27% 25%;              /* Border gray #3a4a5a */
+    --input: 213 27% 15%;               /* Input background */
+    --ring: 210 100% 60%;               /* Focus ring - Azure blue */
+    
+    /* Navigation Specific */
+    --nav-background: 213 27% 10%;      /* Darker nav */
+    --nav-border: 213 27% 20%;
+    --nav-hover: 213 27% 15%;
+    
+    /* Sidebar Specific */
+    --sidebar-background: 213 27% 11%;  /* Slightly different from nav */
+    --sidebar-border: 213 27% 20%;
+    --sidebar-hover: 213 27% 16%;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    
+    /* Radius - Shadcn/UI standard */
+    --radius: 0.5rem;
+  }
+
+  /* Light Theme */
+  .light {
+    /* Microsoft Azure Professional Light Theme */
+    --background: 0 0% 100%;             /* Pure white #ffffff */
+    --foreground: 213 27% 9%;            /* Deep charcoal #141a21 */
+    
+    /* Surface Colors */
+    --surface-primary: 0 0% 97%;         /* Light gray #f7f7f7 */
+    --surface-secondary: 0 0% 94%;       /* Medium light gray #f0f0f0 */
+    --surface-tertiary: 0 0% 91%;        /* Darker light gray #e8e8e8 */
+    --surface-elevated: 0 0% 98%;        /* Elevated white #fafafa */
+    
+    /* Card System - Shadcn/UI compatible */
+    --card: 0 0% 100%;                   /* Card background */
+    --card-foreground: 213 27% 9%;       /* Card text */
+    
+    /* Popover & Modal - Shadcn/UI compatible */
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 27% 9%;
+    
+    /* Azure Brand Colors - Shadcn/UI compatible */
+    --primary: 210 100% 50%;             /* Azure blue #0078d4 */
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 100% 45%;       /* Hover blue #006bb3 */
+    
+    /* Secondary Colors - Shadcn/UI compatible */
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 213 27% 9%;
+    
+    /* Accent Colors - Shadcn/UI compatible */
+    --accent: 0 0% 96%;
+    --accent-foreground: 213 27% 9%;
+    
+    /* Muted Colors - Shadcn/UI compatible */
+    --muted: 0 0% 96%;
+    --muted-foreground: 213 27% 45%;     /* Medium gray #6b7280 */
+    
+    /* Status Colors */
+    --success: 120 60% 40%;              /* Success green #4caf50 */
+    --success-foreground: 0 0% 100%;
+    --warning: 45 100% 45%;              /* Warning amber #e6a700 */
+    --warning-foreground: 0 0% 100%;
+    --destructive: 0 84% 50%;            /* Error red #dc2626 */
+    --destructive-foreground: 0 0% 100%;
+    --info: 200 100% 45%;                /* Info blue #0891b2 */
+    --info-foreground: 0 0% 100%;
+    
+    /* Border & Form Elements - Shadcn/UI compatible */
+    --border: 0 0% 90%;                  /* Border gray #e5e5e5 */
+    --input: 0 0% 100%;                  /* Input background */
+    --ring: 210 100% 50%;                /* Focus ring - Azure blue */
+    
+    /* Navigation Specific */
+    --nav-background: 0 0% 99%;          /* Light nav */
+    --nav-border: 0 0% 90%;
+    --nav-hover: 0 0% 96%;
+    
+    /* Sidebar Specific */
+    --sidebar-background: 0 0% 98%;      /* Slightly different from nav */
+    --sidebar-border: 0 0% 90%;
+    --sidebar-hover: 0 0% 95%;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-azure;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Azure Button System - Modern Shadcn Integration */
+  .btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply h-10 px-4 py-2;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    @apply h-10 px-4 py-2;
+  }
+  
+  .btn-outline {
+    @apply btn border border-input bg-background hover:bg-accent hover:text-accent-foreground;
+    @apply h-10 px-4 py-2;
+  }
+  
+  .btn-ghost {
+    @apply btn hover:bg-accent hover:text-accent-foreground;
+    @apply h-10 px-4 py-2;
+  }
+  
+  .btn-destructive {
+    @apply btn bg-destructive text-destructive-foreground hover:bg-destructive/90;
+    @apply h-10 px-4 py-2;
+  }
+  
+  .btn-sm {
+    @apply h-9 rounded-md px-3;
+  }
+  
+  .btn-lg {
+    @apply h-11 rounded-md px-8;
+  }
+  
+  .btn-icon {
+    @apply h-10 w-10;
+  }
+
+  /* Azure Card System - Enhanced Shadcn Cards */
+  .card {
+    @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+  }
+  
+  .card-header {
+    @apply flex flex-col space-y-1.5 p-6;
+  }
+  
+  .card-title {
+    @apply text-2xl font-semibold leading-none tracking-tight;
+  }
+  
+  .card-description {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  .card-content {
+    @apply p-6 pt-0;
+  }
+  
+  .card-footer {
+    @apply flex items-center p-6 pt-0;
+  }
+
+  /* Azure Table System - Professional Data Tables */
+  .table-container {
+    @apply relative w-full overflow-auto;
+  }
+  
+  .table {
+    @apply w-full caption-bottom text-sm;
+  }
+  
+  .table-header {
+    @apply [&_tr]:border-b;
+  }
+  
+  .table-body {
+    @apply [&_tr:last-child]:border-0;
+  }
+  
+  .table-footer {
+    @apply border-t bg-muted/50 font-medium [&>tr]:last:border-b-0;
+  }
+  
+  .table-row {
+    @apply border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted;
+  }
+  
+  .table-head {
+    @apply h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0;
+  }
+  
+  .table-cell {
+    @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;
+  }
+
+  /* Azure Form System - Modern Input Components */
+  .form-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .form-textarea {
+    @apply flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .form-label {
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+  }
+
+  /* Azure Badge System - Status Indicators */
+  .badge {
+    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+  
+  .badge-default {
+    @apply badge border-transparent bg-primary text-primary-foreground hover:bg-primary/80;
+  }
+  
+  .badge-secondary {
+    @apply badge border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  
+  .badge-destructive {
+    @apply badge border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80;
+  }
+  
+  .badge-success {
+    @apply badge border-transparent bg-success text-success-foreground hover:bg-success/80;
+  }
+  
+  .badge-warning {
+    @apply badge border-transparent bg-warning text-warning-foreground hover:bg-warning/80;
+  }
+  
+  .badge-info {
+    @apply badge border-transparent bg-info text-info-foreground hover:bg-info/80;
+  }
+  
+  .badge-outline {
+    @apply badge text-foreground;
+  }
+
+  /* Azure Navigation System */
+  .nav-main {
+    @apply fixed top-0 left-0 right-0 z-50 border-b border-nav-border bg-nav-background/95 backdrop-blur supports-[backdrop-filter]:bg-nav-background/60;
+  }
+  
+  .nav-item {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-nav-hover hover:text-accent-foreground h-10 px-4 py-2;
+  }
+  
+  .nav-link {
+    @apply nav-item text-muted-foreground;
+  }
+  
+  .nav-link-active {
+    @apply nav-item bg-accent text-accent-foreground;
+  }
+
+  /* Azure Sidebar System */
+  .sidebar {
+    @apply fixed left-0 top-0 z-40 h-screen w-64 transform border-r border-sidebar-border bg-sidebar-background transition-transform;
+  }
+  
+  .sidebar-content {
+    @apply flex h-full flex-col;
+  }
+  
+  .sidebar-item {
+    @apply flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-hover hover:text-accent-foreground min-h-[44px];
+  }
+  
+  .sidebar-item-active {
+    @apply sidebar-item bg-accent text-accent-foreground;
+  }
+
+  /* Azure Modal System */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0;
+  }
+  
+  .modal-content {
+    @apply fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg;
+  }
+
+  /* Azure Progress & Loading */
+  .progress {
+    @apply relative h-4 w-full overflow-hidden rounded-full bg-secondary;
+  }
+  
+  .progress-indicator {
+    @apply h-full w-full flex-1 bg-primary transition-all;
+  }
+
+  /* Azure Scrollbar */
+  .scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+  
+  .scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted));
+    border-radius: 3px;
+  }
+  
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground));
+  }
+
+  /* Azure Animations */
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Azure Grid Pattern Background */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Azure Professional Typography */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--info)));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Global Page Centering and Layout */
+.page-container {
+  @apply min-h-screen bg-background;
+}
+
+.page-content {
+  @apply container mx-auto px-6;
+}
+
+.content-wrapper {
+  @apply max-w-7xl mx-auto;
+}
+
+.hero-wrapper {
+  @apply max-w-5xl mx-auto;
+}
+
+.section-wrapper {
+  @apply max-w-6xl mx-auto;
+}
+
+/* Remove all legacy styles */
+.azure-card,
+.azure-card-header,
+.azure-card-title,
+.azure-btn-primary,
+.azure-btn-secondary,
+.azure-btn-outline,
+.azure-table,
+.azure-modal-overlay,
+.azure-modal,
+.azure-modal-header,
+.azure-modal-body,
+.azure-modal-footer,
+.azure-badge-primary,
+.azure-badge-success,
+.azure-badge-warning,
+.azure-badge-info,
+.azure-space-xs,
+.azure-space-sm,
+.azure-space-md,
+.azure-space-lg,
+.azure-space-xl,
+.azure-space-2xl,
+.azure-space-3xl,
+.azure-gap-xs,
+.azure-gap-sm,
+.azure-gap-md,
+.azure-gap-lg,
+.azure-gap-xl,
+.azure-mb-xs,
+.azure-mb-sm,
+.azure-mb-md,
+.azure-mb-lg,
+.azure-mb-xl,
+.azure-mt-xs,
+.azure-mt-sm,
+.azure-mt-md,
+.azure-mt-lg,
+.azure-mt-xl,
+.azure-transition,
+.azure-shadow-sm,
+.azure-shadow-md,
+.azure-shadow-lg,
+.azure-shadow-xl,
+.azure-scrollbar {
+  /* Legacy classes - will be replaced with Shadcn/UI components */
+}

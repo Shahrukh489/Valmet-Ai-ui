@@ -1,0 +1,44 @@
+{
+  "navigation": {
+    "home": "Laman Utama",
+    "columnConfigurator": "Konfigurasi Lajur",
+    "searchParts": "Cari Bahagian",
+    "managerPortal": "Portal Pengurus",
+    "reportBug": "Laporkan Pepijat",
+    "cart": "Troli",
+    "logout": "Log Keluar",
+    "language": "Bahasa",
+    "helpSupport": "Bantuan & Sokongan",
+    "myAccount": "Akaun Saya"
+  },
+  "dashboard": {
+    "title": "Papan Pemuka Analitik",
+    "subtitle": "Pantau prestasi perniagaan dan metrik utama anda",
+    "totalSales": "Jumlah Jualan",
+    "totalQuotations": "Jumlah Sebut Harga",
+    "totalRevenue": "Jumlah Pendapatan",
+    "categoryDistribution": "Pengedaran Kategori",
+    "salesTrend": "Trend Jualan",
+    "topSellingParts": "Bahagian Paling Laris",
+    "recentQuotes": "Sebut Harga Terkini"
+  },
+  "reportBug": {
+    "title": "Laporkan Pepijat",
+    "subtitle": "Bantu kami menambah baik dengan melaporkan sebarang isu yang anda hadapi. Kami akan menyemak laporan anda dan menghubungi anda tidak lama lagi.",
+    "bugTitle": "Tajuk Pepijat",
+    "description": "Penerangan",
+    "severity": "Tahap Keterukan",
+    "reporterEmail": "E-mel Pelapor",
+    "submit": "Hantar Laporan Pepijat"
+  },
+  "itemDetails": {
+    "title": "Butiran Item",
+    "addToInvoice": "Tambah ke Invois",
+    "currentPrice": "Harga Semasa",
+    "basicInformation": "Maklumat Asas",
+    "pricingCosts": "Harga & Kos",
+    "categories": "Kategori",
+    "statusClassification": "Status & Klasifikasi",
+    "additionalInformation": "Maklumat Tambahan"
+  }
+}
