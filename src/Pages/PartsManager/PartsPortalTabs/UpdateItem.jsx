@@ -3,9 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 import SearchBar from '../../../components/SearchBarComp/SearchBar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
-// import ListView from '../../ColumnConfigurator/ListView';
 import FoundItem from './FoundItem';
-import { FaStar } from "react-icons/fa";
+import { AlertCircle, Search } from "lucide-react";
 
 function UpdateItem() {
      const [itemToUpdate, setItemToUpdate] = useState(null);
@@ -26,64 +25,71 @@ function UpdateItem() {
        alert("Item clicked!");
      };
   return (
-    <Card>
-      <Card.Body>
-        <Card.Title>Update Item</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">
-          Make Changes to Item Details
-        </Card.Subtitle>
-        <Card.Text>
-          <div className="mb-3" style={{ marginTop: "20px" }}>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Search className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Update Item</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Search for a part and make changes to item details
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
             <SearchBar
               placeholder="Enter Part Number"
               tag="priceupdate"
               part={getSearchedPart}
             />
           </div>
-          {/* React Bootstrap Modal for result not found */}
-          <Modal show={showModal} centered onHide={() => setShowModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>There Was a Problem</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Result not found</Modal.Body>
-            <Modal.Footer>
-              <Button variant="danger" onClick={() => setShowModal(false)}>
-                Close
-              </Button>
-            </Modal.Footer>
-          </Modal>
+        </CardContent>
+      </Card>
 
-          {/* EditForm Component */}
-          {itemToUpdate && (
-            // <ListView
-            //   key={itemToUpdate.partnumber}
-            //   id={itemToUpdate.partnumber}
-            //   partNumber={itemToUpdate.partnumber}
-            //   name={itemToUpdate.description}
-            //   price={itemToUpdate.price}
-            //   mlfb={itemToUpdate.mlfb}
-            //   category={itemToUpdate.category}
-            //   note={itemToUpdate.note}
-            //   gcCategory={itemToUpdate.gcCategory}
-            // />
+      {/* Not Found Dialog */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-destructive/10 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-destructive" />
+              </div>
+              <DialogTitle>Part Not Found</DialogTitle>
+            </div>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-muted-foreground">
+              No part was found with the provided part number. Please check the part number and try again.
+            </p>
+          </div>
+          <div className="flex justify-end">
+            <Button variant="outline" onClick={() => setShowModal(false)}>
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
-            <FoundItem
-                key={itemToUpdate.partnumber}
-                id={itemToUpdate.partnumber}
-                partNumber={itemToUpdate.partnumber}
-                name={itemToUpdate.description}
-                price={itemToUpdate.price}
-                mlfb={itemToUpdate.mlfb}
-                category={itemToUpdate.category}
-                note={itemToUpdate.note}
-                gcCategory={itemToUpdate.gcCategory}
-            />
-          )}
-        </Card.Text>
-        {/* <Card.Link href="#">Card Link</Card.Link>
-        <Card.Link href="#">Another Link</Card.Link> */}
-      </Card.Body>
-    </Card>
+      {/* Found Item */}
+      {itemToUpdate && (
+        <FoundItem
+          key={itemToUpdate.partnumber}
+          id={itemToUpdate.partnumber}
+          partNumber={itemToUpdate.partnumber}
+          name={itemToUpdate.description}
+          price={itemToUpdate.price}
+          mlfb={itemToUpdate.mlfb}
+          category={itemToUpdate.category}
+          note={itemToUpdate.note}
+          gcCategory={itemToUpdate.gcCategory}
+        />
+      )}
+    </div>
   );
 }
 

@@ -12,8 +12,10 @@ import {
   HelpCircle,
   LogOut,
   User,
-  Shield
+  Shield,
+  Edit
 } from "lucide-react";
+import { Badge } from "../../components/ui/badge";
 
 const PortalSidebar = () => {
   const location = useLocation();
@@ -49,6 +51,14 @@ const PortalSidebar = () => {
       label: "Reports",
       icon: FileText,
       description: "Generate & export data"
+    },
+    {
+      id: "parts-editor",
+      to: "/managerportal/parts-editor",
+      label: "Parts Editor",
+      icon: Edit,
+      description: "Advanced parts management",
+      badge: "Under Construction"
     },
     {
       id: "bugs",
@@ -122,13 +132,18 @@ const PortalSidebar = () => {
                 className={`sidebar-item group ${active ? "sidebar-item-active" : ""}`}
                 title={item.description}
               >
-                <div className="flex items-center gap-3 w-full">
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
-                    <div className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.description}
-                    </div>
+                    {item.badge && (
+                      <Badge variant="secondary" className="text-xs px-2 py-0 ml-2 bg-orange-100 text-orange-700 border-orange-200">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground opacity-0">
+                    {item.description}
                   </div>
                 </div>
               </Link>
@@ -154,13 +169,11 @@ const PortalSidebar = () => {
                 className={`sidebar-item group ${active ? "sidebar-item-active" : ""}`}
                 title={item.description}
               >
-                <div className="flex items-center gap-3 w-full">
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
-                    <div className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                      {item.description}
-                    </div>
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>
+                  <div className="text-xs text-muted-foreground opacity-0">
+                    {item.description}
                   </div>
                 </div>
               </Link>
@@ -191,7 +204,7 @@ const PortalSidebar = () => {
             
             <button 
               onClick={handleLogout}
-              className="w-full mt-3 sidebar-item justify-start group hover:bg-destructive/10 hover:text-destructive"
+              className="w-full mt-3 sidebar-item group hover:bg-destructive/10 hover:text-destructive"
               title="Sign out of manager portal"
             >
               <LogOut className="w-4 h-4" />

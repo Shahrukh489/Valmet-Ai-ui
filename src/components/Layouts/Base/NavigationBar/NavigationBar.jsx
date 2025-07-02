@@ -117,11 +117,11 @@ function NavigationBar() {
               <img
                 src="/Valmet.png"
                 alt="Valmet"
-                className="h-8 w-auto brightness-0 invert group-hover:scale-105 transition-transform duration-200"
+                className="h-8 w-auto brightness-0 invert group-hover:scale-105 group-hover:rotate-3 transition-all duration-300 ease-out"
               />
               <div className="hidden sm:block">
-                <span className="text-xl font-semibold text-foreground">SPT</span>
-                <div className="text-xs text-muted-foreground">Spare Parts Portal</div>
+                <span className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-200">SPT</span>
+                <div className="text-xs text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-200">Spare Parts Portal</div>
               </div>
             </Link>
 
@@ -140,10 +140,10 @@ function NavigationBar() {
                       isActive ? "nav-link-active" : "nav-link"
                     )}
                   >
-                    <Icon className="h-4 w-4 mr-2" />
+                    <Icon className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-200" />
                     <span className="font-medium">{item.label}</span>
                     {isActive && (
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></div>
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse"></div>
                     )}
                   </Link>
                 );
@@ -198,7 +198,7 @@ function NavigationBar() {
                   {cartTotalQuantity > 0 && (
                     <Badge 
                       variant="default" 
-                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse"
+                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-bounce"
                     >
                       {cartTotalQuantity}
                     </Badge>
@@ -218,6 +218,12 @@ function NavigationBar() {
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuLabel>{t('navigation.myAccount')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/user-settings" className="flex items-center">
+                      <Settings className="h-4 w-4 mr-2" />
+                      User Settings
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={toggleTheme} className="flex items-center">
                     {theme === 'dark' ? (
                       <Sun className="h-4 w-4 mr-2" />
@@ -267,7 +273,7 @@ function NavigationBar() {
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-up">
+            <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-down">
               <div className="px-4 py-6 space-y-4">
                 
                 {/* Mobile Navigation Links */}

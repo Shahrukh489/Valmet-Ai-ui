@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Search, X, Loader2, Clock, AlertTriangle } from "lucide-react";
+import { LoadingSpinner } from "../ui/loading-spinner";
+import { useTranslation } from "react-i18next";
 
 function SearchBar(props) {
+  const { t } = useTranslation('global');
   const [searchValue, setSearchValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -166,13 +169,13 @@ function SearchBar(props) {
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto pt-4">
       <form onSubmit={handleParse} className="relative">
         <div
-          className={`relative flex items-center bg-input border rounded-lg azure-transition ${
+          className={`relative flex items-center bg-input border rounded-lg transition-all duration-300 ease-out ${
             isFocused
-              ? "border-primary azure-shadow-md ring-2 ring-primary/20"
-              : "border-border hover:border-primary/50 azure-shadow-sm"
+              ? "border-primary shadow-lg ring-2 ring-primary/20 scale-[1.02]"
+              : "border-border hover:border-primary/50 shadow-sm hover:shadow-md"
           }`}
         >
           {/* Search Icon */}
@@ -191,9 +194,9 @@ function SearchBar(props) {
               setShowSuggestions(true);
             }}
             onBlur={() => setIsFocused(false)}
-            placeholder={props.placeholder || "Search parts, configurations, or MLFB codes..."}
+            placeholder={props.placeholder || t('searchBar.placeholder')}
             className="flex-1 py-3 pr-20 text-foreground placeholder-muted-foreground bg-transparent focus:outline-none"
-            aria-label="Search"
+            aria-label={t('common.search')}
           />
 
           {/* Clear Button */}
@@ -201,8 +204,8 @@ function SearchBar(props) {
             <button
               type="button"
               onClick={handleClearSearch}
-              className="p-2 text-muted-foreground hover:text-foreground azure-transition"
-              aria-label="Clear search"
+              className="p-2 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-110 hover:rotate-90"
+              aria-label={t('searchBar.clearSearch')}
             >
               <X className="h-4 w-4" />
             </button>
@@ -210,12 +213,12 @@ function SearchBar(props) {
 
           {/* Loading Spinner */}
           {isLoading && (
-            <div className="p-2">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            <div className="p-2 animate-fade-in">
+              <LoadingSpinner size="sm" variant="current" />
             </div>
           )}
 
-          {/* Search Button */}
+          {/* Search Button
           <button
             type="submit"
             disabled={isLoading || !searchValue.trim()}
@@ -226,20 +229,20 @@ function SearchBar(props) {
             ) : (
               "Search"
             )}
-          </button>
+          </button> */}
         </div>
 
         {/* Search Suggestions */}
         {showSuggestions && filteredSuggestions.length > 0 && searchValue && (
           <div
             ref={suggestionsRef}
-            className="absolute z-50 w-full mt-2 bg-popover rounded-lg azure-shadow-lg border border-border overflow-hidden animate-azure-scale-in"
+            className="absolute z-50 w-full mt-2 bg-popover rounded-lg shadow-xl border border-border overflow-hidden animate-slide-down"
           >
             <div className="py-1">
               <div className="px-4 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider border-b border-border">
                 <div className="flex items-center azure-gap-xs">
                   <Clock className="w-3 h-3" />
-                  <span>Recent Searches</span>
+                  <span>{t('searchBar.recentSearches')}</span>
                 </div>
               </div>
               {filteredSuggestions.map((suggestion, index) => (
@@ -247,7 +250,7 @@ function SearchBar(props) {
                   key={index}
                   type="button"
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="w-full px-4 py-3 text-left text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground azure-transition flex items-center azure-gap-sm"
+                  className="w-full px-4 py-3 text-left text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200 flex items-center gap-2 hover:scale-[1.02]"
                 >
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <span className="font-mono">{suggestion}</span>
@@ -260,38 +263,36 @@ function SearchBar(props) {
 
       {/* Azure Error Modal */}
       {showErrorModal && (
-        <div className="azure-modal-overlay">
-          <div className="azure-modal">
-            <div className="azure-modal-header">
-              <div className="flex items-center azure-gap-sm">
-                <AlertTriangle className="w-6 h-6 text-warning" />
-                <h3 className="text-lg font-semibold text-card-foreground">
-                  Configuration Errors
-                </h3>
-              </div>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg rounded-lg animate-scale-in">
+            <div className="flex items-center gap-2 pb-4">
+              <AlertTriangle className="w-6 h-6 text-warning animate-bounce" />
+              <h3 className="text-lg font-semibold text-card-foreground">
+                {t('errors.configurationErrors')}
+              </h3>
             </div>
-            <div className="azure-modal-body">
-              <p className="text-muted-foreground azure-mb-md">
-                The following errors were encountered while processing your configuration:
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                {t('errors.errorEncountered')}
               </p>
               <div className="space-y-2">
                 {errorMessages.length > 0 ? (
                   errorMessages.map((error, index) => (
-                    <div key={index} className="bg-warning/10 border border-warning/20 rounded-lg azure-space-sm">
+                    <div key={index} className="bg-warning/10 border border-warning/20 rounded-lg p-3 animate-slide-left" style={{animationDelay: `${index * 0.1}s`}}>
                       <p className="text-sm text-warning-foreground">{error}</p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No specific error messages available.</p>
+                  <p className="text-sm text-muted-foreground">{t('errors.noErrorMessages')}</p>
                 )}
               </div>
             </div>
-            <div className="azure-modal-footer">
+            <div className="flex justify-end pt-4">
               <button
                 onClick={() => setShowErrorModal(false)}
-                className="azure-btn-primary"
+                className="btn-primary hover-lift"
               >
-                Got it
+                {t('modals.ok')}
               </button>
             </div>
           </div>
@@ -300,32 +301,30 @@ function SearchBar(props) {
 
       {/* Azure Column Not Found Modal */}
       {showNotFoundModal && (
-        <div className="azure-modal-overlay">
-          <div className="azure-modal">
-            <div className="azure-modal-header">
-              <div className="flex items-center azure-gap-sm">
-                <Search className="w-6 h-6 text-muted-foreground" />
-                <h3 className="text-lg font-semibold text-card-foreground">
-                  Column Not Found
-                </h3>
-              </div>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg rounded-lg animate-scale-in">
+            <div className="flex items-center gap-2 pb-4">
+              <Search className="w-6 h-6 text-muted-foreground animate-pulse" />
+              <h3 className="text-lg font-semibold text-card-foreground">
+                {t('errors.columnNotFound')}
+              </h3>
             </div>
-            <div className="azure-modal-body">
-              <p className="text-muted-foreground azure-mb-md">
-                The column part number <span className="font-mono bg-surface-secondary azure-space-xs rounded">{searchValue}</span> was not found in our system.
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                {t('errors.columnNotFoundMessage')} <span className="font-mono bg-surface-secondary px-2 py-1 rounded animate-pulse">{searchValue}</span>
               </p>
-              <div className="bg-info/10 border border-info/20 rounded-lg azure-space-sm">
+              <div className="bg-info/10 border border-info/20 rounded-lg p-3 animate-slide-up">
                 <p className="text-sm text-info">
-                  <strong>Tip:</strong> Try searching for COL, A6X, US2, or 2021 part numbers for column configurations.
+                  {t('errors.columnNotFoundTip')}
                 </p>
               </div>
             </div>
-            <div className="azure-modal-footer">
+            <div className="flex justify-end gap-2 pt-4">
               <button
                 onClick={() => setShowNotFoundModal(false)}
-                className="azure-btn-secondary"
+                className="btn-secondary hover-scale"
               >
-                Close
+                {t('common.close')}
               </button>
               <button
                 onClick={() => {
@@ -333,9 +332,9 @@ function SearchBar(props) {
                   setSearchValue("");
                   searchInputRef.current?.focus();
                 }}
-                className="azure-btn-primary"
+                className="btn-primary hover-lift"
               >
-                Try Again
+                {t('common.tryAgain')}
               </button>
             </div>
           </div>
@@ -344,32 +343,30 @@ function SearchBar(props) {
 
       {/* Azure Spare Part Not Found Modal */}
       {showSparePartNotFoundModal && (
-        <div className="azure-modal-overlay">
-          <div className="azure-modal">
-            <div className="azure-modal-header">
-              <div className="flex items-center azure-gap-sm">
-                <Search className="w-6 h-6 text-muted-foreground" />
-                <h3 className="text-lg font-semibold text-card-foreground">
-                  Spare Part Not Found
-                </h3>
-              </div>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg rounded-lg animate-scale-in">
+            <div className="flex items-center gap-2 pb-4">
+              <Search className="w-6 h-6 text-muted-foreground animate-pulse" />
+              <h3 className="text-lg font-semibold text-card-foreground">
+                {t('errors.sparePartNotFound')}
+              </h3>
             </div>
-            <div className="azure-modal-body">
-              <p className="text-muted-foreground azure-mb-md">
-                The spare part <span className="font-mono bg-surface-secondary azure-space-xs rounded">{searchValue}</span> was not found in our inventory.
+            <div className="space-y-4">
+              <p className="text-muted-foreground">
+                {t('errors.sparePartNotFoundMessage')} <span className="font-mono bg-surface-secondary px-2 py-1 rounded animate-pulse">{searchValue}</span>
               </p>
-              <div className="bg-info/10 border border-info/20 rounded-lg azure-space-sm">
+              <div className="bg-info/10 border border-info/20 rounded-lg p-3 animate-slide-up">
                 <p className="text-sm text-info">
-                  <strong>Suggestion:</strong> Please verify the part number format and try again, or browse our parts catalog.
+                  {t('errors.sparePartNotFoundSuggestion')}
                 </p>
               </div>
             </div>
-            <div className="azure-modal-footer">
+            <div className="flex justify-end gap-2 pt-4">
               <button
                 onClick={() => setShowSparePartNotFoundModal(false)}
-                className="azure-btn-secondary"
+                className="btn-secondary hover-scale"
               >
-                Close
+                {t('common.close')}
               </button>
               <button
                 onClick={() => {
@@ -377,9 +374,9 @@ function SearchBar(props) {
                   setSearchValue("");
                   searchInputRef.current?.focus();
                 }}
-                className="azure-btn-primary"
+                className="btn-primary hover-lift"
               >
-                Search Again
+                {t('common.tryAgain')}
               </button>
             </div>
           </div>

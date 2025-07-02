@@ -4,7 +4,7 @@ import TableComp from "../../components/TableComp/TableComp";
 function SearchListViewPage(props) {
   return (
     <div className="w-full">
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
         <TableComp search={props.search} />
       </div>
     </div>

@@ -145,19 +145,7 @@ function SearchPage() {
       <div className="bg-gradient-to-r from-background via-muted/20 to-background border-b">
         <div className="container mx-auto px-6 py-6">
           <div className="max-w-5xl mx-auto text-center mb-6">
-            <div className="inline-flex items-center space-x-3 mb-4">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <Calculator className="h-6 w-6 text-primary" />
-              </div>
-              <div className="text-left">
-                <h1 className="text-2xl font-bold text-foreground">
-                  Column Configurator
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Design and configure MAXUM columns with intelligent pricing
-                </p>
-              </div>
-            </div>
+            
             
             <div className="max-w-2xl mx-auto">
               <SearchBar
@@ -181,7 +169,7 @@ function SearchPage() {
             {showConfigPanel && (
               <button
                 onClick={handleResetConfiguration}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-200"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg"
               >
                 <RefreshCw className="w-4 h-4" />
                 Reset Configuration
@@ -234,22 +222,7 @@ function SearchPage() {
                 </CardContent>
               </Card>
 
-              {/* Quick Stats */}
-              {showConfigPanel && (
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <div className="text-sm font-medium text-muted-foreground mb-2">
-                        Configuration Status
-                      </div>
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                        <span className="text-sm text-success font-medium">Active</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+             
             </div>
           </div>
 

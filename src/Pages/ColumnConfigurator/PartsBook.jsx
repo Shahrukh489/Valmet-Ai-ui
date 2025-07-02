@@ -40,11 +40,11 @@ function PartsBook() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50" style={{ paddingTop: "90px" }}>
+      <div className="min-h-screen bg-background" style={{ paddingTop: "90px" }}>
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex flex-col items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600 mb-4" />
-            <p className="text-gray-600">Loading parts book chapters...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Loading parts book chapters...</p>
           </div>
         </div>
       </div>
@@ -53,19 +53,19 @@ function PartsBook() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50" style={{ paddingTop: "90px" }}>
+      <div className="min-h-screen bg-background" style={{ paddingTop: "90px" }}>
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="flex flex-col items-center justify-center py-16">
-            <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <AlertCircle className="w-12 h-12 text-destructive mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">
               Failed to Load Parts Book
             </h3>
-            <p className="text-gray-600 mb-6 text-center max-w-md">
+            <p className="text-muted-foreground mb-6 text-center max-w-md">
               {error}
             </p>
             <button
               onClick={handleRetry}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg"
             >
               <RefreshCw className="w-4 h-4" />
               Try Again
@@ -77,17 +77,17 @@ function PartsBook() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ paddingTop: "90px" }}>
+    <div className="min-h-screen bg-background" style={{ paddingTop: "90px" }}>
       {/* Modern Header Section */}
-      <div className="bg-white border-b border-gray-200 px-6 py-8">
+      <div className="bg-card border-b border-border px-6 py-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
-            <Book className="w-8 h-8 text-blue-600" />
+            <Book className="w-8 h-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-foreground">
                 Spare Parts Book
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-muted-foreground mt-1">
                 Browse spare parts organized by chapters and categories
               </p>
             </div>
@@ -97,12 +97,12 @@ function PartsBook() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="bg-white rounded-lg border border-gray-200">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="bg-card rounded-lg border border-border">
+          <div className="px-6 py-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">
               Chapters ({chapterTitles.length})
             </h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Click on any chapter to explore available spare parts
             </p>
           </div>
@@ -110,11 +110,11 @@ function PartsBook() {
           <div className="p-6">
             {chapterTitles.length === 0 ? (
               <div className="text-center py-12">
-                <Book className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <Book className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">
                   No Chapters Available
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   No parts book chapters are currently available.
                 </p>
               </div>
@@ -123,7 +123,7 @@ function PartsBook() {
                 {chapterTitles.map((title, index) => (
                   <div
                     key={`${title.chapter}-${index}`}
-                    className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                    className="border border-border rounded-lg overflow-hidden"
                   >
                     <Accordian
                       chapterTitles={title.title}

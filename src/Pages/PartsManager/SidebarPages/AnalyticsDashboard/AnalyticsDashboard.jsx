@@ -69,12 +69,6 @@ const salesTrend = [
 
   return (
     <div className="min-h-screen bg-background p-6 space-y-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-foreground mb-2">Analytics Dashboard</h1>
-        <p className="text-muted-foreground">Monitor your business performance and key metrics</p>
-      </div>
-
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-card border-border hover:bg-accent/50 transition-colors duration-200">

@@ -29,6 +29,11 @@ function ManagerPortalMain() {
       description: "Issue tracking and resolution management",
       category: "Support"
     };
+    if (path.includes("parts-editor")) return {
+      title: "Parts Editor",
+      description: "Advanced spare parts management with CRUD operations",
+      category: "Management"
+    };
     if (path.includes("settings")) return {
       title: "System Settings",
       description: "Configuration and preferences",

@@ -35,7 +35,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         size="icon"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="h-7 w-7"
+        className="h-7 w-7 hover:bg-transparent hover:text-current"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -50,7 +50,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             key={page}
             variant="ghost"
             className={clsx(
-              "h-7 w-7 rounded-full text-sm font-medium",
+              "h-7 w-7 rounded-full text-sm font-medium hover:bg-transparent hover:text-current",
               page === currentPage && "bg-muted text-primary"
             )}
             onClick={() => onPageChange(page)}
@@ -65,7 +65,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         size="icon"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="h-7 w-7"
+        className="h-7 w-7 hover:bg-transparent hover:text-current"
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

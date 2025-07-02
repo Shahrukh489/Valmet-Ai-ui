@@ -10,8 +10,11 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { EmptySpareParts } from "./ExcelTemplates/EmptySpareParts";
+import { LoadingSpinner } from "../../components/ui/loading-spinner";
+import { useTranslation } from "react-i18next";
 
 function Filters({ onFilteredParts }) {
+  const { t } = useTranslation('global');
   // Form state
   const [filters, setFilters] = useState({
     partNumber: "",
@@ -108,39 +111,39 @@ function Filters({ onFilteredParts }) {
   const hasActiveFilters = Object.values(filters).some(value => value !== "");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       {/* Filter Inputs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Part Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Part Number
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t('filters.partNumber')}
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Enter part number"
+              placeholder={t('filters.partNumber')}
               value={filters.partNumber}
               onChange={(e) => handleFilterChange('partNumber', e.target.value)}
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-3 py-2 border border-border rounded-lg text-sm bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary"
             />
           </div>
         </div>
 
         {/* Location */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Location
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t('filters.location')}
           </label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <select
               value={filters.location}
               onChange={(e) => handleFilterChange('location', e.target.value)}
-              className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
+              className="w-full pl-10 pr-8 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary appearance-none"
             >
-              <option value="">All Locations</option>
+              <option value="">{t('filters.allLocations')}</option>
               <option value="Houston">Houston</option>
               <option value="Finland">Finland</option>
             </select>
@@ -149,18 +152,18 @@ function Filters({ onFilteredParts }) {
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t('filters.category')}
           </label>
           <div className="relative">
-            <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <select
               value={filters.category}
               onChange={(e) => handleFilterChange('category', e.target.value)}
               disabled={isLoading}
-              className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white disabled:bg-gray-100"
+              className="w-full pl-10 pr-8 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary appearance-none disabled:bg-muted"
             >
-              <option value="">All Categories</option>
+              <option value="">{t('filters.allCategories')}</option>
               {categories.map((category, index) => (
                 <option key={index} value={category}>
                   {category}
@@ -172,20 +175,20 @@ function Filters({ onFilteredParts }) {
 
         {/* Status */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
+          <label className="block text-sm font-medium text-foreground mb-1">
+            {t('filters.status')}
           </label>
           <div className="relative">
-            <Activity className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Activity className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
+              className="w-full pl-10 pr-8 py-2 border border-border rounded-lg text-sm bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary appearance-none"
             >
-              <option value="">All Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Discontinued">Discontinued</option>
+              <option value="">{t('filters.allStatus')}</option>
+              <option value="Active">{t('common.active')}</option>
+              <option value="Inactive">{t('common.inactive')}</option>
+              <option value="Discontinued">{t('filters.discontinued')}</option>
             </select>
           </div>
         </div>
@@ -197,11 +200,15 @@ function Filters({ onFilteredParts }) {
         <button
           onClick={handleApplyFilters}
           disabled={isApplying}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg disabled:opacity-50"
         >
-          <FilterIcon className="w-4 h-4" />
+          {isApplying ? (
+            <LoadingSpinner size="sm" />
+          ) : (
+            <FilterIcon className="w-4 h-4" />
+          )}
           <span className="text-sm font-medium">
-            {isApplying ? "Applying..." : "Apply Filters"}
+            {isApplying ? t('filters.applying') : t('filters.applyFilters')}
           </span>
         </button>
 
@@ -209,42 +216,42 @@ function Filters({ onFilteredParts }) {
         {hasActiveFilters && (
           <button
             onClick={handleResetFilters}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg animate-fade-in"
           >
             <RotateCcw className="w-4 h-4" />
-            <span className="text-sm font-medium">Reset</span>
+            <span className="text-sm font-medium">{t('filters.resetFilters')}</span>
           </button>
         )}
 
-        <div className="h-8 w-px bg-gray-300" />
+        <div className="h-8 w-px bg-border" />
 
         {/* Export Data */}
-        <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+        <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg">
           <Download className="w-4 h-4" />
-          <span className="text-sm font-medium">Export Data</span>
+          <span className="text-sm font-medium">{t('filters.exportData')}</span>
         </button>
 
         {/* Download Template */}
         <button
           onClick={handleDownloadTemplate}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg"
         >
           <FileSpreadsheet className="w-4 h-4" />
-          <span className="text-sm font-medium">Download Template</span>
+          <span className="text-sm font-medium">{t('filters.downloadTemplate')}</span>
         </button>
       </div>
 
       {/* Active Filters Display */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-gray-600">Active filters:</span>
+        <div className="flex flex-wrap items-center gap-2 animate-slide-up">
+          <span className="text-sm text-muted-foreground">{t('filters.activeFilters')}</span>
           {Object.entries(filters).map(([key, value]) => {
             if (!value) return null;
             
             return (
               <span
                 key={key}
-                className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
+                className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm animate-scale-in"
               >
                 <span className="font-medium capitalize">
                   {key.replace(/([A-Z])/g, ' $1').trim()}:
@@ -252,7 +259,7 @@ function Filters({ onFilteredParts }) {
                 <span>{value}</span>
                 <button
                   onClick={() => handleFilterChange(key, "")}
-                  className="ml-1 hover:text-blue-900"
+                  className="ml-1"
                 >
                   ×
                 </button>

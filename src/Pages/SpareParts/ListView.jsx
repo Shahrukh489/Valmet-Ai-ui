@@ -12,10 +12,11 @@ import {
   Tag, 
   ExternalLink, 
   ShoppingCart,
-  AlertCircle,
   Layers,
   Boxes,
-  ImageOff
+  ImageOff,
+  CheckCircle,
+  Info
 } from "lucide-react";
 
 function ListView(props) {
@@ -42,28 +43,36 @@ function ListView(props) {
   };
 
   const getAvailabilityBadge = () => {
-    return <Badge className="bg-success text-success-foreground">In Stock</Badge>;
+    return (
+      <div className="flex items-center gap-1">
+        <CheckCircle className="w-3 h-3 text-emerald-500" />
+        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs font-medium">
+          In Stock
+        </Badge>
+      </div>
+    );
   };
 
+
   return (
-    <Card className="group mb-4 border border-border hover:border-primary/20 hover:shadow-lg transition-all duration-300 overflow-hidden bg-card">
+    <Card className="group mb-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
       <CardContent className="p-0">
         <div className="flex flex-col lg:flex-row">
           
           {/* Image Section */}
-          <div className="w-full lg:w-36 xl:w-40 lg:flex-shrink-0">
-            <div className="aspect-square relative overflow-hidden rounded-lg bg-muted/20 border border-border shadow-sm">
+          <div className="relative lg:w-32 xl:w-36 lg:flex-shrink-0">
+            <div className="aspect-square relative overflow-hidden bg-gray-50 dark:bg-gray-700">
               {!imageError ? (
                 <>
                   {imageLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-muted/30 backdrop-blur-sm">
-                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-800/80">
+                      <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
                     </div>
                   )}
                   <img
                     src={`https://stasptusedvapp.blob.core.windows.net/part-images/${props.partNumber}.JPG`}
                     alt={props.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                     onLoad={() => setImageLoading(false)}
                     onError={(e) => {
                       e.currentTarget.onerror = null;
@@ -71,120 +80,132 @@ function ListView(props) {
                       setImageLoading(false);
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-muted/40 to-muted/70 text-muted-foreground border-2 border-dashed border-muted-foreground/20">
-                  <ImageOff className="w-10 h-10 mb-2 text-muted-foreground/60" />
-                  <span className="text-xs font-medium text-center px-2 text-muted-foreground/80">No Image Available</span>
+                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-600">
+                  <ImageOff className="w-6 h-6 text-gray-400 mb-1" />
+                  <span className="text-xs text-gray-500 text-center px-2">
+                    No Image
+                  </span>
                 </div>
               )}
+              
             </div>
           </div>
 
           {/* Content Section */}
-          <div className="flex-1 p-6">
-            <div className="flex flex-col h-full space-y-4">
+          <div className="flex-1 p-4">
+            <div className="h-full flex flex-col">
               
-              {/* Header Row */}
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              {/* Header Section */}
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 mb-4">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-start gap-3 mb-2">
-                    <Package className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-lg font-semibold text-foreground leading-tight mb-1 break-words">
-                        {props.name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Tag className="w-3 h-3" />
-                        <span className="font-mono">{props.partNumber}</span>
-                      </div>
-                    </div>
+                  {/* Part Number Badge */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <Package className="w-3 h-3 text-blue-600" />
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {props.partNumber}
+                    </Badge>
+                  </div>
+                  
+                  {/* Part Name */}
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 leading-tight mb-2">
+                    {props.name}
+                  </h3>
+                  
+                  {/* MLFB Code */}
+                  <div className="flex items-center gap-2">
+                    <Tag className="w-3 h-3 text-gray-400" />
+                    <span className="text-xs text-gray-500">MLFB:</span>
+                    <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded text-xs font-mono text-gray-700 dark:text-gray-300">
+                      {props.mlfb}
+                    </code>
                   </div>
                 </div>
                 
-                <div className="flex flex-col items-end space-y-2">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-success" />
-                    <span className="text-xl font-bold text-foreground">
-                      {USDollar.format(props.price)}
-                    </span>
+                {/* Price Section */}
+                <div className="flex flex-col items-end gap-2">
+                  <div className="text-right">
+                    <div className="flex items-baseline gap-1">
+                      <DollarSign className="w-4 h-4 text-emerald-600" />
+                      <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                        {USDollar.format(props.price).replace('$', '')}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">USD per unit</p>
                   </div>
                   {getAvailabilityBadge()}
                 </div>
               </div>
 
-              {/* Details Section */}
-              <div className="flex-1 space-y-3">
+              {/* Details Grid */}
+              <div className="flex-1 mb-4">
                 
-                {/* MLFB Information */}
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-muted-foreground">MLFB:</span>
-                  <span className="font-mono text-foreground bg-muted px-2 py-1 rounded text-xs">
-                    {props.mlfb}
-                  </span>
-                </div>
-
                 {/* Note Section */}
                 {props.note && (
-                  <div className="flex items-start gap-2 p-3 bg-info/10 border border-info/20 rounded-lg">
-                    <AlertCircle className="w-4 h-4 text-info mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-info italic">
-                      {props.note}
-                    </p>
+                  <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <Info className="w-3 h-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">Note</p>
+                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                          {props.note}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
-                {/* Categories Section */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Layers className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <span className="text-muted-foreground">Product:</span>
-                      <span className="ml-1 text-foreground font-medium">
-                        {props.productCategory}
-                      </span>
+                {/* Categories Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <div className="p-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Layers className="w-3 h-3 text-purple-500" />
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Product</span>
                     </div>
+                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
+                      {props.productCategory || 'N/A'}
+                    </p>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm">
-                    <Boxes className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <span className="text-muted-foreground">Item:</span>
-                      <span className="ml-1 text-foreground font-medium">
-                        {props.itemCategory}
-                      </span>
+                  <div className="p-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Boxes className="w-3 h-3 text-cyan-500" />
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Item</span>
                     </div>
+                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
+                      {props.itemCategory || 'N/A'}
+                    </p>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm">
-                    <Tag className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <span className="text-muted-foreground">Sub:</span>
-                      <span className="ml-1 text-foreground font-medium">
-                        {props.subProductCategory}
-                      </span>
+                  <div className="p-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Tag className="w-3 h-3 text-indigo-500" />
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Sub-Category</span>
                     </div>
+                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
+                      {props.subProductCategory || 'N/A'}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Actions Section */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-gray-200 dark:border-gray-600">
                 <Link
                   to={`/details/${props.partNumber}`}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 border border-primary/20 rounded-lg hover:bg-primary/20 hover:border-primary/30 transition-all duration-200 group"
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors duration-150"
                 >
-                  <ExternalLink className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <ExternalLink className="w-3 h-3" />
                   View Details
                 </Link>
                 
                 <Button
                   onClick={handleAddtoBasket}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium bg-success text-success-foreground hover:bg-success/90 border-0 rounded-lg transition-all duration-200 group"
+                  size="sm"
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors duration-150"
                 >
-                  <ShoppingCart className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <ShoppingCart className="w-3 h-3" />
                   Add to Invoice
                 </Button>
               </div>

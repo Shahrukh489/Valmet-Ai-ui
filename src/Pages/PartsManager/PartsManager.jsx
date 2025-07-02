@@ -154,18 +154,18 @@ function PartsManager() {
   return (
     <div className="space-y-4">
       {/* Toolbar */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
+      <div className="bg-card rounded-lg border border-border p-4">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           <div className="flex flex-1 items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search parts by number, description, or MLFB..."
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-10 pr-4 py-2 border border-border rounded-lg text-sm bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary"
               />
             </div>
 
@@ -173,13 +173,13 @@ function PartsManager() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
-                showFilters ? 'bg-blue-50 text-blue-600 border-blue-200' : 'border-gray-300 hover:bg-gray-50'
+                showFilters ? 'bg-primary/10 text-primary border-primary/20' : 'border-border hover:bg-accent'
               }`}
             >
               <Filter className="w-4 h-4" />
               <span className="text-sm font-medium">Filters</span>
               {filtersApplied && (
-                <span className="w-2 h-2 bg-blue-600 rounded-full" />
+                <span className="w-2 h-2 bg-primary rounded-full" />
               )}
             </button>
           </div>
@@ -189,18 +189,18 @@ function PartsManager() {
             <button
               onClick={() => fetchParts(currentPage)}
               disabled={isLoading}
-              className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="p-2 border border-border rounded-lg hover:bg-accent transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
             
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
               <Download className="w-4 h-4" />
               <span className="text-sm font-medium">Export</span>
             </button>
 
             {selectedRows.length > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-lg">
+              <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-lg">
                 <span className="text-sm font-medium">{selectedRows.length} selected</span>
               </div>
             )}
@@ -209,38 +209,38 @@ function PartsManager() {
 
         {/* Filters */}
         {showFilters && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-border">
             <Filters onFilteredParts={handleFilteredParts} />
           </div>
         )}
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted/50 border-b border-border">
               <tr>
                 <th className="w-12 px-4 py-3">
                   <input
                     type="checkbox"
                     checked={selectedRows.length === sortedData.length && sortedData.length > 0}
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-border text-primary focus:ring-primary bg-background"
                   />
                 </th>
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className={`px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                      column.sortable ? 'cursor-pointer hover:text-gray-700' : ''
+                    className={`px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider ${
+                      column.sortable ? 'cursor-pointer hover:text-foreground' : ''
                     }`}
                     onClick={() => column.sortable && handleSort(column.key)}
                   >
                     <div className="flex items-center gap-1">
                       {column.label}
                       {column.sortable && sortConfig.key === column.key && (
-                        <span className="text-blue-600">
+                        <span className="text-primary">
                           {sortConfig.direction === 'asc' ? '↑' : '↓'}
                         </span>
                       )}
@@ -250,13 +250,13 @@ function PartsManager() {
               </tr>
             </thead>
             
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-border">
               {isLoading ? (
                 <tr>
                   <td colSpan={columns.length + 1} className="px-4 py-8 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <RefreshCw className="w-5 h-5 animate-spin text-blue-600" />
-                      <span className="text-gray-600">Loading parts...</span>
+                      <RefreshCw className="w-5 h-5 animate-spin text-primary" />
+                      <span className="text-muted-foreground">Loading parts...</span>
                     </div>
                   </td>
                 </tr>
@@ -264,23 +264,23 @@ function PartsManager() {
                 <tr>
                   <td colSpan={columns.length + 1} className="px-4 py-8 text-center">
                     <div className="flex flex-col items-center gap-2">
-                      <AlertCircle className="w-8 h-8 text-gray-300" />
-                      <span className="text-gray-500">No parts found</span>
+                      <AlertCircle className="w-8 h-8 text-muted-foreground" />
+                      <span className="text-muted-foreground">No parts found</span>
                     </div>
                   </td>
                 </tr>
               ) : (
                 sortedData.map((item) => (
-                  <tr key={item.partnumber} className="hover:bg-gray-50">
+                  <tr key={item.partnumber} className="hover:bg-muted/50">
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
                         checked={selectedRows.includes(item.partnumber)}
                         onChange={(e) => handleSelectRow(item.partnumber, e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-border text-primary focus:ring-primary bg-background"
                       />
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    <td className="px-4 py-3 text-sm font-medium text-foreground">
                       {item.partnumber}
                     </td>
                     <td className="px-4 py-3">
@@ -293,43 +293,43 @@ function PartsManager() {
                         }}
                       />
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900 max-w-xs truncate">
+                    <td className="px-4 py-3 text-sm text-foreground max-w-xs truncate">
                       {item.description}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-foreground">
                       {formatPrice(item.price)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-foreground">
                       {item.ved || '-'}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                         item.atonStatus === 'active' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-success/20 text-success' 
+                          : 'bg-muted text-muted-foreground'
                       }`}>
                         {item.atonStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-foreground">
                       {item.maxum || '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-foreground">
                       {item.mlfb || '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                    <td className="px-4 py-3 text-sm text-foreground">
                       {item.itemCategory || '-'}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
-                        <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                          <Eye className="w-4 h-4 text-gray-500" />
+                        <button className="p-1 hover:bg-accent rounded transition-colors">
+                          <Eye className="w-4 h-4 text-muted-foreground" />
                         </button>
-                        <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                          <Edit className="w-4 h-4 text-gray-500" />
+                        <button className="p-1 hover:bg-accent rounded transition-colors">
+                          <Edit className="w-4 h-4 text-muted-foreground" />
                         </button>
-                        <button className="p-1 hover:bg-gray-100 rounded transition-colors">
-                          <Trash2 className="w-4 h-4 text-gray-500" />
+                        <button className="p-1 hover:bg-accent rounded transition-colors">
+                          <Trash2 className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </div>
                     </td>
@@ -342,9 +342,9 @@ function PartsManager() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
+          <div className="px-4 py-3 border-t border-border bg-muted/50">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-muted-foreground">
                 Showing {((currentPage - 1) * PAGE_SIZE) + 1} to {Math.min(currentPage * PAGE_SIZE, totalItems)} of {totalItems} results
               </span>
               <Pagination

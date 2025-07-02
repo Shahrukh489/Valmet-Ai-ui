@@ -21,6 +21,7 @@ const BASE_URL = "https://wea-spt-use-dv-configurationsapi-001.azurewebsites.net
 
 function Filterbox(props) {
   const [options, setOptions] = useState([]);
+  const [originalOptions, setOriginalOptions] = useState([]); // Store original options
   const [filters, setFilters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,7 +54,18 @@ function Filterbox(props) {
       try {
         const response = await fetch(`${BASE_URL}v1/configurations`);
         const options = await response.json();
-        setOptions(options.result);
+        console.log("🔄 Full API response:", options);
+        console.log("🔄 Options result:", options.result);
+        console.log("📊 Group codes available:", [...new Set(options.result?.map(o => o.groupCode))]);
+        console.log("🏭 Filling material options (group 12):", options.result?.filter(o => o.groupCode === "12"));
+        console.log("🧪 Sample option structure:", options.result?.[0]);
+        
+        if (options.result && Array.isArray(options.result)) {
+          setOptions(options.result);
+          setOriginalOptions(options.result); // Store original options
+        } else {
+          console.error("❌ Invalid options data structure:", options);
+        }
 
         const filtersResponse = await fetch(`${BASE_URL}v1/configurations/filters`);
         const filters = await filtersResponse.json();
@@ -205,12 +217,15 @@ function Filterbox(props) {
   };
 
   const mlfbHandler = (option) => {
-    // Only add user selections (first 3) to MLFB array
-    // API options will be handled separately in the final generation
-    if (props.partNumberOptions.length === 0 || 
-        (props.partNumberOptions.length > 0 && 
-         (option.optionName === "Diameter" || option.optionName === "Length" || option.optionName === "Tubing"))) {
-      
+    // For manual configuration (no API options), add all selections to MLFB array
+    // For API-assisted configuration, only add user selections (first 3)
+    if (props.partNumberOptions.length === 0) {
+      // Manual configuration - add all options to MLFB array
+      const newMLFBArray = [...mlfbArray, option.code];
+      setMLFBArray(newMLFBArray);
+    } else if (props.partNumberOptions.length > 0 && 
+               (option.optionName === "Diameter" || option.optionName === "Length" || option.optionName === "Tubing")) {
+      // API-assisted configuration - only add first 3 user selections
       const newMLFBArray = [...mlfbArray, option.code];
       setMLFBArray(newMLFBArray);
       
@@ -259,6 +274,8 @@ function Filterbox(props) {
   };
 
   const handleDisables = (option) => {
+    console.log("🔧 handleDisables called with option:", option);
+    console.log("🏷️ Option name:", option.optionName);
     // Handle sequential enabling for both normal workflow and API pre-populated workflow
     switch (option.optionName) {
       case "Diameter":
@@ -275,39 +292,39 @@ function Filterbox(props) {
         if (props.partNumberOptions.length >= 4) {
           setButtonDisabled(false);
         } else {
+          // Always enable mesh selection for manual configuration
           setMeshDisabled(false);
         }
         break;
       case "Mesh":
-        if (props.partNumberOptions.length === 0) {
-          setMeshDisabled(true);
-          setFillingDisabled(false);
-        }
+        // Always enable the next step for manual configuration
+        setMeshDisabled(true);
+        setFillingDisabled(false);
         break;
       case "Filling":
-        if (props.partNumberOptions.length === 0) {
-          setFillingDisabled(true);
-          setLiquidDisabled(false);
-        }
+        // Always enable the next step for manual configuration
+        setFillingDisabled(true);
+        setLiquidDisabled(false);
         break;
       case "Liquid":
-        if (props.partNumberOptions.length === 0) {
-          setLiquidDisabled(true);
-          setLoadDisabled(false);
-        }
+        // Always enable the next step for manual configuration
+        setLiquidDisabled(true);
+        setLoadDisabled(false);
         break;
       case "Load":
-        if (props.partNumberOptions.length === 0) {
-          setLoadDisabled(true);
-          setButtonDisabled(false);
-        }
+        // Always enable generate button after load selection
+        setLoadDisabled(true);
+        setButtonDisabled(false);
         break;
       default:
+        console.log("⚠️ Unknown option name:", option.optionName);
+        console.log("📋 Full option object:", option);
         return null;
     }
   };
 
   const handleConfiguration = (option) => {
+    console.log("🔧 Configuration selected:", option);
     setFormData((oldArray) => [...oldArray, option]);
 
     const changes = filters.filter(
@@ -317,6 +334,8 @@ function Filterbox(props) {
         f.filterType === "E"
     );
 
+    console.log("🔍 Filter changes found:", changes);
+
     // Create a new array instead of modifying the original
     const updatedOptions = [...options];
     changes.forEach((f) => {
@@ -325,15 +344,19 @@ function Filterbox(props) {
       });
 
       if (index > -1) {
+        console.log("❌ Removing option:", updatedOptions[index]);
         updatedOptions.splice(index, 1);
       }
     });
+    
+    console.log("📊 Remaining filling options (group 12):", 
+      updatedOptions.filter(o => o.groupCode === "12"));
     
     // Update the options state with the filtered array
     setOptions(updatedOptions);
   };
 
-  if (isLoading) {
+  if (isLoading || originalOptions.length === 0) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-8">
@@ -497,7 +520,7 @@ function Filterbox(props) {
                       {props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.name}
                     </SelectItem>
                   ) : (
-                    options
+                    originalOptions
                       .filter((option) => option.groupCode === "11")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
@@ -536,8 +559,8 @@ function Filterbox(props) {
                       {props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.name}
                     </SelectItem>
                   ) : (
-                    options
-                      .filter((option) => option.groupCode === "12")
+                    originalOptions
+                      .filter((option) => option.groupCode === "A")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
                           {option.code} - {option.name}
@@ -575,8 +598,8 @@ function Filterbox(props) {
                       {props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.name}
                     </SelectItem>
                   ) : (
-                    options
-                      .filter((option) => option.groupCode === "13")
+                    originalOptions
+                      .filter((option) => option.groupCode === "B")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
                           {option.code} - {option.name}
@@ -614,8 +637,8 @@ function Filterbox(props) {
                       {props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.name}
                     </SelectItem>
                   ) : (
-                    options
-                      .filter((option) => option.groupCode === "14")
+                    originalOptions
+                      .filter((option) => option.groupCode === "C")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
                           {option.code} - {option.name}
