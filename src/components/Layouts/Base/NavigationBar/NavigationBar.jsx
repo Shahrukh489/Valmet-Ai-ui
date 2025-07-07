@@ -101,7 +101,7 @@ function NavigationBar() {
       path: "/managerportal",
       label: t('navigation.managerPortal'),
       icon: Shield,
-      show: isAdminOrManager
+      show: true
     }
   ];
 
@@ -136,15 +136,12 @@ function NavigationBar() {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      "nav-item group",
-                      isActive ? "nav-link-active" : "nav-link"
+                      "inline-flex items-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-nav-hover hover:text-accent-foreground h-10 px-4 py-2 group",
+                      isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground"
                     )}
                   >
-                    <Icon className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-200" />
+                    <Icon className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform duration-200 flex-shrink-0" />
                     <span className="font-medium">{item.label}</span>
-                    {isActive && (
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary rounded-full animate-pulse"></div>
-                    )}
                   </Link>
                 );
               })}
@@ -156,7 +153,7 @@ function NavigationBar() {
               {/* Language Selector */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="nav-item">
+                  <Button variant="ghost" size="sm" className="inline-flex items-center">
                     <span className="text-lg">
                       {languages.find(lang => lang.code === i18n.language)?.flag || '🇺🇸'}
                     </span>
@@ -177,9 +174,6 @@ function NavigationBar() {
                     >
                       <span className="text-lg">{lang.flag}</span>
                       <span className="flex-1">{lang.name}</span>
-                      {i18n.language === lang.code && (
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      )}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -190,10 +184,10 @@ function NavigationBar() {
                 variant="ghost" 
                 size="sm" 
                 asChild 
-                className="nav-item relative"
+                className="inline-flex items-center relative"
               >
-                <Link to="/cart">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
+                <Link to="/cart" className="inline-flex items-center">
+                  <ShoppingCart className="h-4 w-4 mr-2 flex-shrink-0" />
                   <span className="hidden sm:inline font-medium">{t('navigation.cart')}</span>
                   {cartTotalQuantity > 0 && (
                     <Badge 
@@ -209,8 +203,8 @@ function NavigationBar() {
               {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="nav-item">
-                    <User className="h-4 w-4 mr-2" />
+                  <Button variant="ghost" size="sm" className="inline-flex items-center">
+                    <User className="h-4 w-4 mr-2 flex-shrink-0" />
                     <span className="hidden sm:inline font-medium">Account</span>
                     <ChevronDown className="h-3 w-3 ml-1" />
                   </Button>
@@ -220,15 +214,15 @@ function NavigationBar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/user-settings" className="flex items-center">
-                      <Settings className="h-4 w-4 mr-2" />
+                      <Settings className="h-4 w-4 mr-2 flex-shrink-0" />
                       User Settings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={toggleTheme} className="flex items-center">
                     {theme === 'dark' ? (
-                      <Sun className="h-4 w-4 mr-2" />
+                      <Sun className="h-4 w-4 mr-2 flex-shrink-0" />
                     ) : (
-                      <Moon className="h-4 w-4 mr-2" />
+                      <Moon className="h-4 w-4 mr-2 flex-shrink-0" />
                     )}
                     <span className="flex-1">
                       {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
@@ -237,19 +231,19 @@ function NavigationBar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/report-a-bug" className="flex items-center">
-                      <Bug className="h-4 w-4 mr-2" />
+                      <Bug className="h-4 w-4 mr-2 flex-shrink-0" />
                       {t('navigation.reportBug')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/help" className="flex items-center">
-                      <HelpCircle className="h-4 w-4 mr-2" />
+                      <HelpCircle className="h-4 w-4 mr-2 flex-shrink-0" />
                       {t('navigation.helpSupport')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                    <LogOut className="h-4 w-4 mr-2" />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive flex items-center">
+                    <LogOut className="h-4 w-4 mr-2 flex-shrink-0" />
                     {t('navigation.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -259,7 +253,7 @@ function NavigationBar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="lg:hidden nav-item"
+                className="lg:hidden inline-flex items-center"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? (
@@ -294,7 +288,7 @@ function NavigationBar() {
                             : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                         )}
                       >
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-5 w-5 flex-shrink-0" />
                         <span>{item.label}</span>
                       </Link>
                     );

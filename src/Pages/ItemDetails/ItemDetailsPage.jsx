@@ -4,13 +4,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Separator } from "../../components/ui/separator";
-import { Loader2, ShoppingCart, Package, DollarSign, Info, AlertCircle, ArrowLeft, Star, Check } from "lucide-react";
+import { Loader2, ShoppingCart, Package, DollarSign, Info, AlertCircle, ArrowLeft, Check, Heart, Share2, Truck, Shield, RotateCcw, Plus, Minus } from "lucide-react";
 
 const ItemDetailsPage = () => {
   const { partNumber } = useParams();
   const [part, setPart] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [isWishlist, setIsWishlist] = useState(false);
 
   //URLS
   const SPAREPARTSAPI_BASE_URL =
@@ -93,8 +95,12 @@ const ItemDetailsPage = () => {
     return value;
   };
 
+  const handleQuantityChange = (change) => {
+    setQuantity(Math.max(1, quantity + change));
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -107,214 +113,325 @@ const ItemDetailsPage = () => {
         </div>
       ) : (
         <>
-          {/* Compact Header */}
-          <div className="bg-gradient-to-r from-background via-muted/10 to-background border-b">
-            <div className="max-w-6xl mx-auto px-6 py-4">
-              <button 
-                onClick={() => window.history.back()} 
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-3 text-sm"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to results
-              </button>
-              
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h1 className="text-xl font-semibold text-foreground mb-2 line-clamp-2">
-                    {part.description}
-                  </h1>
-                  <div className="flex items-center gap-3 text-sm">
-                    <span className="font-mono text-muted-foreground">
-                      Part #{part.partnumber}
-                    </span>
-                    {part.ved && (
-                      <Badge variant="secondary" className="text-xs px-2 py-1">
-                        VED: {part.ved}
-                      </Badge>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Check className="h-3 w-3 text-success" />
-                      <span className="text-success text-xs">In Stock</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="text-right ml-6">
-                  <div className="text-2xl font-bold text-foreground">
-                    {USDollar.format(part.price)}
-                  </div>
-                  <div className="text-xs text-muted-foreground">Current Price</div>
-                </div>
+          {/* Navigation Bar */}
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center py-3">
+                <button 
+                  onClick={() => window.history.back()} 
+                  className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to search results
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Compact Main Content */}
-          <div className="max-w-6xl mx-auto px-6 py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Main Product Section */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               
-              {/* Product Image - Smaller */}
-              <div className="lg:col-span-2">
-                <div className="bg-card border rounded-lg p-4">
-                  <div className="aspect-square bg-muted/20 rounded-lg overflow-hidden mb-4">
+              {/* Product Image Section */}
+              <div className="lg:col-span-5">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                  <div className="aspect-square bg-white rounded-lg border border-gray-100 dark:border-gray-600 overflow-hidden">
                     <img
                       src={`https://stasptusedvapp.blob.core.windows.net/part-images/${part.partnumber}.JPG`}
                       alt={part.description}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain p-4"
                       onError={(e) => {
                         e.target.src = '/No_Image_Available.jpg';
                       }}
                     />
                   </div>
-                  
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Invoice
-                  </Button>
                 </div>
               </div>
 
-              {/* Product Details - Compact with ALL Information */}
-              <div className="lg:col-span-3 space-y-4">
+              {/* Product Info Section */}
+              <div className="lg:col-span-4">
+                <div className="space-y-6">
+                  {/* Product Title & Basic Info */}
+                  <div>
+                    <h1 className="text-2xl font-normal text-gray-900 dark:text-gray-100 mb-4">
+                      {part.description}
+                    </h1>
+                    
+                    {/* Part Number & Status */}
+                    <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-mono">Part #{part.partnumber}</span>
+                      {part.ved && (
+                        <Badge variant="outline" className="text-xs">
+                          VED: {part.ved}
+                        </Badge>
+                      )}
+                      <div className="flex items-center gap-1 text-green-600">
+                        <Check className="h-4 w-4" />
+                        <span>In Stock</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Price Section */}
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Price:</span>
+                      <span className="text-3xl text-red-600 font-normal">
+                        {USDollar.format(part.price)}
+                      </span>
+                    </div>
+                    {part.costs && part.costs !== part.price && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm text-gray-500 line-through">
+                          {USDollar.format(part.costs)}
+                        </span>
+                        <span className="text-sm text-green-600 font-medium">
+                          Save {USDollar.format(part.costs - part.price)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Key Features */}
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">About this item</h3>
+                    <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Original Valmet spare part - {part.partnumber}</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Category: {part.itemCategory || 'Industrial Parts'}</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Product line: {part.productCategory || 'Valmet'}</span>
+                      </li>
+                      {part.mlfb && (
+                        <li className="flex items-start gap-2">
+                          <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span>MLFB: {part.mlfb}</span>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Purchase Section */}
+              <div className="lg:col-span-3">
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 sticky top-4">
+                  {/* Price Display */}
+                  <div className="mb-4">
+                    <div className="text-2xl font-normal text-red-600 mb-1">
+                      {USDollar.format(part.price)}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Unit price for invoicing
+                    </div>
+                  </div>
+
+                  {/* Availability Info */}
+                  <div className="mb-4 text-sm">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Truck className="h-4 w-4 text-green-600" />
+                      <span className="text-green-600 font-medium">Available</span>
+                    </div>
+                    <div className="text-gray-600 dark:text-gray-400">
+                      Ready for order processing
+                    </div>
+                  </div>
+
+                  {/* Quantity Selector */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Quantity:
+                    </label>
+                    <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md w-24">
+                      <button
+                        onClick={() => handleQuantityChange(-1)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        disabled={quantity <= 1}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <span className="flex-1 text-center py-2 border-x border-gray-300 dark:border-gray-600">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => handleQuantityChange(1)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3">
+                    <Button className="w-full bg-orange-400 hover:bg-orange-500 text-white font-medium py-2 rounded-full">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Invoice
+                    </Button>
+                    
+                    <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium py-2 rounded-full">
+                      Request Quote
+                    </Button>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 border-gray-300 dark:border-gray-600"
+                        onClick={() => setIsWishlist(!isWishlist)}
+                      >
+                        <Heart className={`h-4 w-4 mr-2 ${isWishlist ? 'fill-red-500 text-red-500' : ''}`} />
+                        {isWishlist ? 'Saved' : 'Save'}
+                      </Button>
+                      <Button variant="outline" className="border-gray-300 dark:border-gray-600">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Business Features */}
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-green-600" />
+                        <span>Secure business transaction</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RotateCcw className="h-4 w-4 text-blue-600" />
+                        <span>Standard warranty terms</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Product Details Tabs */}
+            <div className="mt-8">
+              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div className="border-b border-gray-200 dark:border-gray-700">
+                  <div className="px-6 py-4">
+                    <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">Product Details</h2>
+                  </div>
+                </div>
                 
-                {/* Basic Information */}
-                <div className="bg-card border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Package className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Basic Information</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Part Number</span>
-                      <div className="font-mono text-foreground">{part.partnumber || "Not Available"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Description</span>
-                      <div className="text-foreground">{part.description || "Not Available"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">MLFB</span>
-                      <div className="font-mono text-foreground">{part.mlfb || "Not Available"}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pricing & Costs */}
-                <div className="bg-card border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <DollarSign className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Pricing & Costs</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Price</span>
-                      <div className="text-foreground font-medium">{formatValue(part.price, "currency")}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Costs</span>
-                      <div className="text-foreground">{formatValue(part.costs, "currency")}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Categories */}
-                <div className="bg-card border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Info className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Categories</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Item Category</span>
-                      <div className="text-foreground">{part.itemCategory || "Not Available"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Product Category</span>
-                      <div className="text-foreground">{part.productCategory || "Not Available"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Sub Product Category</span>
-                      <div className="text-foreground">{part.subProductCategory || "Not Available"}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Status & Classification */}
-                <div className="bg-card border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <AlertCircle className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Status & Classification</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">VED Classification</span>
-                      <div className="text-foreground">
-                        {part.ved ? (
-                          <Badge variant="outline" className="text-xs px-2 py-0.5">
-                            {part.ved === 'V' ? 'Vital' : part.ved === 'E' ? 'Essential' : 'Desirable'} ({part.ved})
-                          </Badge>
-                        ) : (
-                          "Not Available"
-                        )}
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Aton Status</span>
-                      <div className="text-foreground">{part.atonStatus || "Not Available"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Maxum</span>
-                      <div className="text-foreground">{part.maxum || "Not Available"}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Information */}
-                <div className="bg-card border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Info className="h-4 w-4 text-primary" />
-                    <h3 className="font-semibold text-foreground text-sm">Additional Information</h3>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Note</span>
-                      <div className="text-foreground">{part.note || "Not Available"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-muted-foreground text-xs">Internal Note</span>
-                      <div className="text-foreground">{part.internalNote || "Not Available"}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Important Notes - Highlighted if present */}
-                {(part.note || part.internalNote) && (part.note !== "Not Available" || part.internalNote !== "Not Available") && (
-                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertCircle className="h-4 w-4 text-amber-600" />
-                      <h3 className="font-semibold text-amber-800 dark:text-amber-200 text-sm">
-                        Important Notes
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    {/* Basic Information */}
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                        <Package className="h-4 w-4 text-blue-600" />
+                        Basic Information
                       </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Part Number</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100 font-mono">{part.partnumber || "Not Available"}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{part.description || "Not Available"}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">MLFB</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100 font-mono">{part.mlfb || "Not Available"}</dd>
+                        </div>
+                      </div>
                     </div>
-                    {part.note && part.note !== "Not Available" && (
-                      <div className="mb-2">
-                        <span className="text-xs font-medium text-amber-700 dark:text-amber-300">Note:</span>
-                        <p className="text-amber-800 dark:text-amber-200 text-sm">
-                          {part.note}
-                        </p>
-                      </div>
-                    )}
-                    {part.internalNote && part.internalNote !== "Not Available" && (
-                      <div>
-                        <span className="text-xs font-medium text-amber-700 dark:text-amber-300">Internal Note:</span>
-                        <p className="text-amber-700 dark:text-amber-300 text-sm">
-                          {part.internalNote}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
 
+                    {/* Pricing & Categories */}
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-green-600" />
+                        Pricing & Categories
+                      </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Price</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100 font-medium">{formatValue(part.price, "currency")}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Costs</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{formatValue(part.costs, "currency")}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Item Category</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{part.itemCategory || "Not Available"}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Product Category</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{part.productCategory || "Not Available"}</dd>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status & Classification */}
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4 text-orange-600" />
+                        Status & Classification
+                      </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">VED Classification</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">
+                            {part.ved ? (
+                              <Badge variant="outline" className="text-xs">
+                                {part.ved === 'V' ? 'Vital' : part.ved === 'E' ? 'Essential' : 'Desirable'} ({part.ved})
+                              </Badge>
+                            ) : (
+                              "Not Available"
+                            )}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Aton Status</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{part.atonStatus || "Not Available"}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Maxum</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{part.maxum || "Not Available"}</dd>
+                        </div>
+                        <div>
+                          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Sub Product Category</dt>
+                          <dd className="text-sm text-gray-900 dark:text-gray-100">{part.subProductCategory || "Not Available"}</dd>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Information */}
+                  {(part.note || part.internalNote) && (part.note !== "Not Available" || part.internalNote !== "Not Available") && (
+                    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                        <Info className="h-4 w-4 text-blue-600" />
+                        Additional Information
+                      </h3>
+                      <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                        <div className="space-y-3">
+                          {part.note && part.note !== "Not Available" && (
+                            <div>
+                              <dt className="text-sm font-medium text-amber-700 dark:text-amber-300">Note</dt>
+                              <dd className="text-sm text-amber-800 dark:text-amber-200 mt-1">{part.note}</dd>
+                            </div>
+                          )}
+                          {part.internalNote && part.internalNote !== "Not Available" && (
+                            <div>
+                              <dt className="text-sm font-medium text-amber-700 dark:text-amber-300">Internal Note</dt>
+                              <dd className="text-sm text-amber-700 dark:text-amber-300 mt-1">{part.internalNote}</dd>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

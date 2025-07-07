@@ -329,44 +329,51 @@ function SearchParts() {
               <h1 className="text-2xl font-bold text-foreground">Spare Parts Search</h1>
             </div>
             
-            <div className="max-w-2xl mx-auto relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search by part number, description, or GC number..."
-                className="w-full h-12 pl-12 pr-12 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && searchTerm.trim()) {
-                    handleSearch(searchTerm.trim());
-                  }
-                }}
-              />
-              {/* Search Button */}
-              {!isLoading ? (
-                <button
-                  onClick={() => handleSearch(searchTerm.trim())}
-                  className="absolute right-12 top-1/2 transform -translate-y-1/2 text-primary p-1 rounded-full"
-                  disabled={!searchTerm.trim()}
-                  title="Search"
-                >
-                  <Search className="w-4 h-4" />
-                </button>
-              ) : (
-                <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <div className="max-w-2xl mx-auto">
+              <div className="relative">
+                {/* Modern Search Container */}
+                <div className="relative flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md focus-within:shadow-md focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 dark:focus-within:ring-blue-900/30">
+                  {/* Search Icon */}
+                  <div className="pl-4 pr-3">
+                    <Search className="h-5 w-5 text-gray-400 transition-colors duration-200" />
+                  </div>
+                  
+                  {/* Search Input */}
+                  <input
+                    type="text"
+                    placeholder="Search by part number, description, or GC number..."
+                    className="flex-1 py-3 pr-16 text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-transparent focus:outline-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && searchTerm.trim()) {
+                        handleSearch(searchTerm.trim());
+                      }
+                    }}
+                  />
+                  
+                  {/* Action Buttons */}
+                  <div className="flex items-center pr-3 gap-1">
+                    {/* Loading Indicator */}
+                    {isLoading && (
+                      <div className="p-1.5">
+                        <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
+                      </div>
+                    )}
+                    
+                    {/* Clear Button */}
+                    {(searchTerm || isFiltered) && (
+                      <button
+                        onClick={handleResetSearch}
+                        className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                        title="Clear search"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
-              )}
-              {/* Clear Button */}
-              {(searchTerm || isFiltered) && (
-                <button
-                  onClick={handleResetSearch}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground p-1 rounded-full"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
+              </div>
             </div>
           </div>
 

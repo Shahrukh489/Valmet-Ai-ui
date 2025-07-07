@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Settings, RefreshCw, X, AlertCircle, Calculator } from "lucide-react";
+import { Settings, RefreshCw, X, AlertCircle, Calculator, Search, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "../../components/ui/button";
@@ -14,7 +14,6 @@ import {
   AlertDialogTitle,
 } from "../../components/ui/alert-dialog";
 
-import SearchBar from "../../components/SearchBarComp/SearchBar";
 import SearchListViewPage from "./SearchListViewPage";
 import Filterbox from "../../components/FilterBox/Filterbox";
 import MLFB from "../../components/MLFB/MLFB";
@@ -22,6 +21,7 @@ import Possibilities from "../../components/FilterBox/Possibilities";
 
 function SearchPage() {
   const [searchFilter, setSearchFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [MLFBArray, setMLFBArray] = useState([]);
   const [options, setOptions] = useState([]);
@@ -41,15 +41,6 @@ function SearchPage() {
     setSearchByCOL(true);
   }
 
-  function getColumnNumberOptions(data) {
-    console.log(data);
-    if (data.length > 0) {
-      setPartNumberOptions(data);
-      setShowConfigPanel(true);
-    } else {
-      setShowNotFoundModal(true);
-    }
-  }
 
   function getParsedInformation(data) {
     console.log(data);
@@ -137,6 +128,68 @@ function SearchPage() {
     setPartNumber("");
     setPrice(undefined);
     setSearchFilter("");
+    setSearchTerm("");
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim()) {
+      setIsLoading(true);
+      try {
+        // Check if the search term is a column part number (starts with COL)
+        if (searchTerm.trim().toUpperCase().startsWith('COL')) {
+          // Fetch column configuration from API
+          const response = await fetch(
+            `https://wea-spt-use-dv-configurationsapi-001.azurewebsites.net/v1/configurations/parsePartNumber/${searchTerm.trim()}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.result && Array.isArray(data.result) && data.result.length > 0) {
+              // Set the parsed configuration options
+              setPartNumberOptions(data.result);
+              setShowConfigPanel(true);
+              setSearchFilter(searchTerm.trim());
+              console.log("Column configuration found:", data.result);
+            } else {
+              // No configuration found, show not found modal
+              setShowNotFoundModal(true);
+              setSearchFilter(searchTerm.trim());
+            }
+          } else {
+            // API error, show not found modal
+            setShowNotFoundModal(true);
+            setSearchFilter(searchTerm.trim());
+          }
+        } else {
+          // Not a column part number, do regular search
+          getData(searchTerm.trim());
+          setSearchFilter(searchTerm.trim());
+        }
+      } catch (error) {
+        console.error("Error searching for column:", error);
+        setShowNotFoundModal(true);
+        setSearchFilter(searchTerm.trim());
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm("");
+    setSearchFilter("");
+    setShowConfigPanel(false);
+    setPartNumberOptions([]);
+    setMLFBArray([]);
+    setGenerateConfiguration([]);
+    setPartNumber("");
+    setPrice(undefined);
   };
 
   return (
@@ -145,14 +198,55 @@ function SearchPage() {
       <div className="bg-gradient-to-r from-background via-muted/20 to-background border-b">
         <div className="container mx-auto px-6 py-6">
           <div className="max-w-5xl mx-auto text-center mb-6">
-            
+            <div className="inline-flex items-center space-x-3 mb-4">
+              <h1 className="text-2xl font-bold text-foreground">Column Configurator</h1>
+            </div>
             
             <div className="max-w-2xl mx-auto">
-              <SearchBar
-                getData={getData}
-                getPreSetOptions={getColumnNumberOptions}
-                placeholder="Search Part Number Ex: 'COL1044'"
-              />
+              <div className="relative">
+                {/* Modern Search Container */}
+                <div className="relative flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md focus-within:shadow-md focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 dark:focus-within:ring-blue-900/30">
+                  {/* Search Icon */}
+                  <div className="pl-4 pr-3">
+                    <Search className="h-5 w-5 text-gray-400 transition-colors duration-200" />
+                  </div>
+                  
+                  {/* Search Input */}
+                  <input
+                    type="text"
+                    placeholder="Search Part Number Ex: 'COL1044'"
+                    className="flex-1 py-3 pr-16 text-base text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-transparent focus:outline-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && searchTerm.trim()) {
+                        handleSearch();
+                      }
+                    }}
+                  />
+                  
+                  {/* Action Buttons */}
+                  <div className="flex items-center pr-3 gap-1">
+                    {/* Loading Indicator */}
+                    {isLoading && (
+                      <div className="p-1.5">
+                        <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
+                      </div>
+                    )}
+                    
+                    {/* Clear Button */}
+                    {(searchTerm || searchFilter) && (
+                      <button
+                        onClick={handleClearSearch}
+                        className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                        title="Clear search"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -229,6 +323,21 @@ function SearchPage() {
           {/* Results Section */}
           <div className="lg:col-span-3 space-y-6">
             
+            {/* Configuration Loaded Status */}
+            {showConfigPanel && searchFilter.toUpperCase().startsWith('COL') && partNumberOptions.length > 0 && (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <p className="text-sm text-muted-foreground">
+                      Configuration loaded for <span className="font-medium text-foreground">{searchFilter}</span>
+                      {partNumberOptions.length === 7 ? " - Complete configuration found" : " - Partial configuration found, please select first 3 options"}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
             {/* MLFB Code Display */}
             {MLFBArray.length > 0 && (
               <MLFB mlfbCode={MLFBArray} />
@@ -258,7 +367,7 @@ function SearchPage() {
             )}
 
             {/* Search Results */}
-            {searchFilter && !showConfigPanel && (
+            {searchFilter && !showConfigPanel && !searchFilter.toUpperCase().startsWith('COL') && (
               <Card>
                 <CardHeader>
                   <CardTitle>Search Results</CardTitle>
