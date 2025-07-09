@@ -1,6 +1,6 @@
 import React from 'react'
 import { Plus, Package } from "lucide-react";
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 import { useStateValue } from "../../Redux/stateProvider";
 
 import { Button } from "../../components/ui/button";
@@ -14,7 +14,7 @@ function KitListItem(props) {
   const [{ basket }, dispatch] = useStateValue();
   const handleAddtoBasket = () => {
     addToBasket();
-    toast.success(`Added  to Cart`, { position: "bottom-right" });
+    showToast.cart(props.mlfb || "Item");
   };
   const addToBasket = () => {
     //dispatch item to the data layer

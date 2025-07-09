@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "./components/ui/toaster";
 import "./index.css";
 
 // Import i18n configuration
@@ -16,10 +16,10 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
-    <ToastContainer />
     <BrowserRouter>
       <AuthProvider>
         <App />
+        <Toaster />
       </AuthProvider>
     </BrowserRouter>
   </Provider>

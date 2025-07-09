@@ -1,5 +1,5 @@
 import { Plus, Package } from "lucide-react";
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem, updateQuantity, clearCart } from "../../Redux/cartSlice";
 
@@ -19,7 +19,7 @@ function ListItem(props) {
   const dispatch = useDispatch();
   const handleAddtoBasket = () => {
     addToBasket();
-    toast.success(`Added ${props.mlfb} to Cart`, { position: "bottom-right" });
+    showToast.cart(props.mlfb);
   };
   
   const addToBasket = () => {

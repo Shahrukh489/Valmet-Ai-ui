@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Settings, RefreshCw, X, AlertCircle, Calculator, Search, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { showToast } from "../../lib/toast-utils";
 
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
@@ -34,6 +35,7 @@ function SearchPage() {
   const [generateConfiguration, setGenerateConfiguration] = useState([]);
   const [price, setPrice] = useState();
   const [showConfigPanel, setShowConfigPanel] = useState(false);
+  const [resetTrigger, setResetTrigger] = useState(0);
 
   function getData(data) {
     console.log(data);
@@ -53,29 +55,33 @@ function SearchPage() {
   }
 
   function handleFinalConfiguration(data) {
-    console.log(data);
+    console.log("🔧 handleFinalConfiguration received data:", data);
+    console.log("🔧 Current partNumberOptions:", partNumberOptions);
 
-    const newArr = [...data, ...partNumberOptions];
+    // Don't duplicate the partNumberOptions - FilterBox already combines them correctly
+    const finalConfiguration = data;
 
     if (partNumberOptions.length > 0) {
-      console.log("here");
-      generatePartNumber(partNumberOptions);
+      console.log("📝 Using API-assisted configuration");
+      generatePartNumber(finalConfiguration);
     } else {
-      console.log("in else");
-      data.shift();
-      data.shift();
-      data.shift();
-      console.log(data);
-      generatePartNumber(data);
+      console.log("📝 Using manual configuration");
+      // For manual configuration, remove first 3 items (they're just placeholders)
+      const configForPartNumber = [...finalConfiguration];
+      configForPartNumber.shift();
+      configForPartNumber.shift();
+      configForPartNumber.shift();
+      console.log("📝 Configuration for part number:", configForPartNumber);
+      generatePartNumber(configForPartNumber);
     }
 
+    // Generate MLFB array from the final configuration
     setMLFBArray([]);
-    newArr.forEach((option) => {
+    finalConfiguration.forEach((option) => {
       setMLFBArray((oldArray) => [...oldArray, option.code]);
-      console.log(MLFBArray);
     });
-    setGenerateConfiguration(newArr);
-    generatePricing(newArr);
+    setGenerateConfiguration(finalConfiguration);
+    generatePricing(finalConfiguration);
   }
 
   async function generatePartNumber(partNumberOptions) {
@@ -121,6 +127,9 @@ function SearchPage() {
   }
 
   const handleResetConfiguration = () => {
+    console.log("🔄 Resetting entire configuration");
+    
+    // Reset all SearchPage state
     setShowConfigPanel(false);
     setPartNumberOptions([]);
     setMLFBArray([]);
@@ -129,17 +138,25 @@ function SearchPage() {
     setPrice(undefined);
     setSearchFilter("");
     setSearchTerm("");
+    
+    // Trigger FilterBox reset
+    setResetTrigger(prev => prev + 1);
   };
 
   const handleSearch = async () => {
     if (searchTerm.trim()) {
       setIsLoading(true);
       try {
-        // Check if the search term is a column part number (starts with COL)
-        if (searchTerm.trim().toUpperCase().startsWith('COL')) {
-          // Fetch column configuration from API
+        // Check if the search term is a column part number (contains COL, A6X, US2, or 2021)
+        if (
+          searchTerm.trim().toUpperCase().includes('COL') ||
+          searchTerm.trim().toUpperCase().includes('A6X') ||
+          searchTerm.trim().toUpperCase().includes('US2') ||
+          searchTerm.trim().toUpperCase().includes('2021')
+        ) {
+          // Use the correct endpoint for packed column search
           const response = await fetch(
-            `https://wea-spt-use-dv-configurationsapi-001.azurewebsites.net/v1/configurations/parsePartNumber/${searchTerm.trim()}`,
+            `https://wea-spt-use-dv-configurationsapi-001.azurewebsites.net/v1/configurations/getPackedColumn?partNumber=${searchTerm.trim()}`,
             {
               method: "GET",
               headers: {
@@ -150,21 +167,51 @@ function SearchPage() {
           
           if (response.ok) {
             const data = await response.json();
-            if (data.result && Array.isArray(data.result) && data.result.length > 0) {
+            console.log("🔍 API Response for", searchTerm, ":", data);
+            console.log("🔍 Result object:", data.result);
+            console.log("🔍 Options array:", data.result?.options);
+            console.log("🔍 Options length:", data.result?.options?.length);
+            
+            // Handle the new API structure: data.result.options
+            if (data.result && data.result.options && Array.isArray(data.result.options) && data.result.options.length > 0) {
+              // Log each option for debugging
+              data.result.options.forEach((option, index) => {
+                console.log(`📌 Option ${index + 1}:`, option);
+              });
+              
               // Set the parsed configuration options
-              setPartNumberOptions(data.result);
+              setPartNumberOptions(data.result.options);
               setShowConfigPanel(true);
               setSearchFilter(searchTerm.trim());
-              console.log("Column configuration found:", data.result);
+              console.log("✅ Column configuration loaded successfully");
+              
+              // Show success toast
+              showToast.success(`Configuration loaded for ${searchTerm}`, {
+                title: "Configuration Found"
+              });
+              
+              // Handle any errors in the response
+              if (data.result.errors && data.result.errors.length > 0) {
+                console.warn("⚠️ API returned errors:", data.result.errors);
+                showToast.warning("Configuration loaded with some warnings", {
+                  title: "Partial Configuration"
+                });
+              }
             } else {
               // No configuration found, show not found modal
               setShowNotFoundModal(true);
               setSearchFilter(searchTerm.trim());
+              showToast.error(`No configuration found for ${searchTerm}`, {
+                title: "Configuration Not Found"
+              });
             }
           } else {
             // API error, show not found modal
             setShowNotFoundModal(true);
             setSearchFilter(searchTerm.trim());
+            showToast.error("Failed to load configuration", {
+              title: "API Error"
+            });
           }
         } else {
           // Not a column part number, do regular search
@@ -175,6 +222,9 @@ function SearchPage() {
         console.error("Error searching for column:", error);
         setShowNotFoundModal(true);
         setSearchFilter(searchTerm.trim());
+        showToast.error("An error occurred while searching", {
+          title: "Search Error"
+        });
       } finally {
         setIsLoading(false);
       }
@@ -182,6 +232,8 @@ function SearchPage() {
   };
 
   const handleClearSearch = () => {
+    console.log("🔄 Clearing search");
+    
     setSearchTerm("");
     setSearchFilter("");
     setShowConfigPanel(false);
@@ -190,6 +242,9 @@ function SearchPage() {
     setGenerateConfiguration([]);
     setPartNumber("");
     setPrice(undefined);
+    
+    // Also trigger FilterBox reset
+    setResetTrigger(prev => prev + 1);
   };
 
   return (
@@ -312,6 +367,7 @@ function SearchPage() {
                     partNumberOptions={partNumberOptions}
                     setPartNumberOptions={setPartNumberOptions}
                     setGenerateConfiguration={handleFinalConfiguration}
+                    resetTrigger={resetTrigger}
                   />
                 </CardContent>
               </Card>

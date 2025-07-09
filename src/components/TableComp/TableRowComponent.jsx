@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 import { Link } from "react-router-dom";
 
 import { useStateValue } from "../../Redux/stateProvider";
@@ -35,7 +35,7 @@ function TableRowComponent(props) {
 
   const handleAddtoBasket = () => {
     addToBasket();
-    toast.success(`Added ${props.item.item_name} to Cart`, {position: 'bottom-right'})
+    showToast.cart(props.item.item_name);
     console.log(basket);
   };
   return (

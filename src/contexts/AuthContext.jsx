@@ -10,7 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("user"));
+    // Check both localStorage and sessionStorage
+    const storedData = JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user") || "null");
 
     const fetchUserRoles = async (userId, token) => {
       try {
@@ -62,7 +63,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = () => {
+    // Clear from both storage types
     localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
+    // Also clear MSAL data
+    localStorage.removeItem("msalUser");
+    localStorage.removeItem("msalAccount");
+    sessionStorage.removeItem("msalUser");
+    sessionStorage.removeItem("msalAccount");
+    // Keep remembered email if it exists
+    // localStorage.removeItem("rememberedEmail"); // Uncomment to forget email on logout
     setUser(null);
     setRoles([]);
   };

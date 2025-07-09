@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { addItem } from "../../Redux/cartSlice";
@@ -39,7 +39,7 @@ function ListView(props) {
         quantity: 1,
       })
     );
-    toast.success(`Added ${props.name} to Cart`, { position: "bottom-right" });
+    showToast.cart(props.name);
   };
 
   const getAvailabilityBadge = () => {

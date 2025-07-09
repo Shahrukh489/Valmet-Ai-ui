@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bug, AlertTriangle, Info, Send } from "lucide-react";
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 
 const ReportBug = () => {
   const [formData, setFormData] = useState({
@@ -56,10 +56,10 @@ const ReportBug = () => {
      ); 
 
      if (!response.ok) {
-       toast.error("Failed to submit bug. Please try again.");
+       showToast.error("Failed to submit bug. Please try again.");
        return;
      }
-    toast.success("Bug successfully submitted!");
+    showToast.success("Bug successfully submitted!");
 
     setFormData({
       title: "",

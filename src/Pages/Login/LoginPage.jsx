@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { msalConfig, loginRequest } from "./authConfig";
 
 const AuthApiBaseUrl = import.meta.env.VITE_AUTHENTICATIONAPI_BASE_URL;
+
+// Initialize MSAL instance
+const msalInstance = new PublicClientApplication(msalConfig);
 
 const LoginPage = (props) => {
   const [email, setEmail] = useState("");
@@ -11,10 +16,16 @@ const LoginPage = (props) => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isMicrosoftLoading, setIsMicrosoftLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Any setup logic can go here
+    // Check if user chose to be remembered
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
   }, []);
 
   const validateForm = () => {
@@ -37,29 +48,74 @@ const LoginPage = (props) => {
   const handleMicrosoftLogin = async () => {
     setIsMicrosoftLoading(true);
     try {
-      // Mock a login response
-      const mockLoginResponse = {
-        account: {
-          username: "mockuser@mockdomain.com",
-          name: "Mock User",
-          homeAccountId: "1234-5678-91011",
-          localAccountId: "1234-5678-91011",
-        },
-        idToken: "mock-id-token",
-      };
-
-      console.log("Microsoft Login Mock Response:", mockLoginResponse);
-
-      // Simulate storing the user's account information
-      const user = mockLoginResponse.account;
-      localStorage.setItem("msalUser", JSON.stringify(user));
-
-      // Simulate post-login actions
-      props.handleIsAuthenticated(true);
-      navigate("/search");
+      // Initialize MSAL
+      await msalInstance.initialize();
+      
+      // Attempt to sign in with popup
+      const loginResponse = await msalInstance.loginPopup(loginRequest);
+      
+      if (loginResponse && loginResponse.account) {
+        // Get the user's account information
+        const account = loginResponse.account;
+        
+        // Create user object similar to your existing auth flow
+        const user = {
+          username: account.username,
+          name: account.name,
+          email: account.username, // username is typically the email in Azure AD
+          idToken: loginResponse.idToken,
+          accessToken: loginResponse.accessToken,
+          homeAccountId: account.homeAccountId,
+          localAccountId: account.localAccountId,
+        };
+        
+        // Store based on remember me preference
+        if (rememberMe) {
+          localStorage.setItem("msalUser", JSON.stringify(user));
+          localStorage.setItem("msalAccount", JSON.stringify(account));
+        } else {
+          sessionStorage.setItem("msalUser", JSON.stringify(user));
+          sessionStorage.setItem("msalAccount", JSON.stringify(account));
+        }
+        
+        // If you have a backend API that needs to validate the token
+        if (AuthApiBaseUrl) {
+          try {
+            const response = await fetch(`${AuthApiBaseUrl}/api/auth/microsoft`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                idToken: loginResponse.idToken,
+                accessToken: loginResponse.accessToken,
+                account: account
+              }),
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              localStorage.setItem("user", JSON.stringify(data.result));
+            }
+          } catch (apiError) {
+            console.log("Backend validation skipped:", apiError);
+            // Continue with frontend-only auth if backend is not available
+          }
+        }
+        
+        // Update authentication state and navigate
+        props.handleIsAuthenticated(true);
+        navigate("/search");
+      }
     } catch (error) {
-      console.error("Mock Microsoft login failed:", error);
-      setErrors({ general: "Microsoft login failed. Please try again." });
+      console.error("Microsoft login failed:", error);
+      
+      // Handle specific MSAL errors
+      if (error.errorCode === "popup_window_error") {
+        setErrors({ general: "Pop-up blocked. Please allow pop-ups for this site and try again." });
+      } else if (error.errorCode === "user_cancelled") {
+        setErrors({ general: "Login cancelled." });
+      } else {
+        setErrors({ general: "Microsoft login failed. Please try again." });
+      }
     } finally {
       setIsMicrosoftLoading(false);
     }
@@ -90,7 +146,19 @@ const LoginPage = (props) => {
       }
 
       const data = await response.json();
-      localStorage.setItem("user", JSON.stringify(data.result));
+      
+      // Handle remember me
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+        // Store auth data in localStorage (persists after browser close)
+        localStorage.setItem("user", JSON.stringify(data.result));
+      } else {
+        // Clear remembered email if unchecked
+        localStorage.removeItem("rememberedEmail");
+        // Store auth data in sessionStorage (clears when browser closes)
+        sessionStorage.setItem("user", JSON.stringify(data.result));
+      }
+      
       props.handleIsAuthenticated(true);
       navigate("/search");
     } catch (error) {
@@ -102,7 +170,7 @@ const LoginPage = (props) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="max-w-md w-full mx-4">
         {/* Logo and Title */}
         <div className="text-center mb-8">
@@ -111,20 +179,20 @@ const LoginPage = (props) => {
             alt="Valmet" 
             className="h-12 mx-auto mb-8"
           />
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold text-white">
             Sign in to your account
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-400">
             Welcome back! Please enter your details.
           </p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white shadow-sm rounded-lg p-8">
+        <div className="bg-gray-800 shadow-xl rounded-lg p-8 border border-gray-700">
           {/* Error Message */}
           {errors.general && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{errors.general}</p>
+            <div className="mb-4 p-3 bg-red-900/20 border border-red-500/50 rounded-md">
+              <p className="text-sm text-red-400">{errors.general}</p>
             </div>
           )}
 
@@ -134,7 +202,7 @@ const LoginPage = (props) => {
             <div>
               <label 
                 htmlFor="email" 
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Email
               </label>
@@ -143,13 +211,13 @@ const LoginPage = (props) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-3 py-2 border rounded-md bg-gray-700 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                  errors.email ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Enter your email"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.email}</p>
               )}
             </div>
 
@@ -157,7 +225,7 @@ const LoginPage = (props) => {
             <div>
               <label 
                 htmlFor="password" 
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1"
               >
                 Password
               </label>
@@ -167,15 +235,15 @@ const LoginPage = (props) => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full px-3 py-2 pr-10 border rounded-md bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 pr-10 border rounded-md bg-gray-700 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                    errors.password ? 'border-red-500' : 'border-gray-600'
                   }`}
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -185,7 +253,7 @@ const LoginPage = (props) => {
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.password}</p>
               )}
             </div>
 
@@ -195,13 +263,15 @@ const LoginPage = (props) => {
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-600 rounded bg-gray-700"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
                   Remember me
                 </label>
               </div>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
+              <a href="#" className="text-sm text-blue-400 hover:text-blue-300">
                 Forgot password?
               </a>
             </div>
@@ -225,10 +295,10 @@ const LoginPage = (props) => {
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-gray-800 text-gray-400">Or continue with</span>
               </div>
             </div>
 
@@ -237,7 +307,7 @@ const LoginPage = (props) => {
               type="button"
               onClick={handleMicrosoftLogin}
               disabled={isMicrosoftLoading}
-              className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex justify-center items-center px-4 py-2 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-200 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isMicrosoftLoading ? (
                 <>
@@ -265,9 +335,9 @@ const LoginPage = (props) => {
         </div>
 
         {/* Footer */}
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <p className="mt-8 text-center text-sm text-gray-400">
           Don't have an account?{' '}
-          <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+          <a href="#" className="font-medium text-blue-400 hover:text-blue-300">
             Contact administrator
           </a>
         </p>

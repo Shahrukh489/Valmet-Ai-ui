@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Package } from "lucide-react";
 import { useStateValue } from "../../Redux/stateProvider";
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -13,7 +13,7 @@ function AccordianItem(props) {
     
     const handleAddtoBasket = () => {
         addToBasket();
-        toast.success(`Added to Cart`, {position: 'bottom-right'})
+        showToast.cart("Item");
     }
     
     const addToBasket = () => {

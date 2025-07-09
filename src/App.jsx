@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import "/node_modules/react-toastify/dist/ReactToastify.css";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 
 import Home from "./Pages/Home/Home";

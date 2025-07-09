@@ -79,9 +79,22 @@ function Filterbox(props) {
     fetchOptions();
   }, []);
 
+  // Reset effect - trigger when reset prop changes
   useEffect(() => {
+    if (props.resetTrigger) {
+      console.log("🔄 Reset triggered from parent");
+      confirmRestart();
+    }
+  }, [props.resetTrigger]);
+
+  useEffect(() => {
+    console.log("🎆 FilterBox received partNumberOptions:", props.partNumberOptions);
+    console.log("🎆 Length:", props.partNumberOptions.length);
+    
     if (props.partNumberOptions.length > 0) {
       if (props.partNumberOptions.length === 7) {
+        console.log("📦 Full configuration (7 options) - populating all dropdowns");
+        
         // Full configuration found - set all dropdowns but leave first 3 enabled for user modification
         setSelectedDiameter(props.partNumberOptions[0]?.id?.toString() || "");
         setSelectedLength(props.partNumberOptions[1]?.id?.toString() || "");
@@ -90,6 +103,25 @@ function Filterbox(props) {
         setSelectedFilling(props.partNumberOptions[4]?.id?.toString() || "");
         setSelectedLiquid(props.partNumberOptions[5]?.id?.toString() || "");
         setSelectedLoad(props.partNumberOptions[6]?.id?.toString() || "");
+        
+        console.log("🎆 Set values:", {
+          diameter: props.partNumberOptions[0]?.id,
+          length: props.partNumberOptions[1]?.id,
+          tubing: props.partNumberOptions[2]?.id,
+          mesh: props.partNumberOptions[3]?.id,
+          filling: props.partNumberOptions[4]?.id,
+          liquid: props.partNumberOptions[5]?.id,
+          load: props.partNumberOptions[6]?.id
+        });
+        
+        // Force a re-render to ensure dropdowns update
+        setTimeout(() => {
+          console.log("🔄 Forcing dropdown update for full config");
+          setSelectedMesh(props.partNumberOptions[3]?.id?.toString() || "");
+          setSelectedFilling(props.partNumberOptions[4]?.id?.toString() || "");
+          setSelectedLiquid(props.partNumberOptions[5]?.id?.toString() || "");
+          setSelectedLoad(props.partNumberOptions[6]?.id?.toString() || "");
+        }, 100);
         
         // Keep first 3 enabled for user selection, last 4 are from API
         setDiameterDisabled(false);
@@ -107,13 +139,33 @@ function Filterbox(props) {
         
         // Don't generate MLFB codes yet - wait for user selections
         setMLFBArray([]);
-      } else if (props.partNumberOptions.length >= 4) {
+      } else if (props.partNumberOptions.length === 4) {
+        console.log("📦 Partial configuration (4 options) - populating last 4 dropdowns");
+        
         // Partial configuration found - populate last 4 dropdowns only
-        const lastFour = props.partNumberOptions.slice(-4);
+        const lastFour = props.partNumberOptions;
+        console.log("🎆 Last four options:", lastFour);
+        
         setSelectedMesh(lastFour[0]?.id?.toString() || "");
         setSelectedFilling(lastFour[1]?.id?.toString() || "");
         setSelectedLiquid(lastFour[2]?.id?.toString() || "");
         setSelectedLoad(lastFour[3]?.id?.toString() || "");
+        
+        console.log("🎆 Set last 4 values:", {
+          mesh: lastFour[0]?.id,
+          filling: lastFour[1]?.id,
+          liquid: lastFour[2]?.id,
+          load: lastFour[3]?.id
+        });
+        
+        // Force a re-render to ensure dropdowns update
+        setTimeout(() => {
+          console.log("🔄 Forcing dropdown update");
+          setSelectedMesh(lastFour[0]?.id?.toString() || "");
+          setSelectedFilling(lastFour[1]?.id?.toString() || "");
+          setSelectedLiquid(lastFour[2]?.id?.toString() || "");
+          setSelectedLoad(lastFour[3]?.id?.toString() || "");
+        }, 100);
         
         // Enable first 3 for user selection, pre-populate last 4
         setDiameterDisabled(false);
@@ -129,7 +181,11 @@ function Filterbox(props) {
         
         // Don't generate MLFB codes yet - wait for user selections
         setMLFBArray([]);
+      } else {
+        console.log("⚠️ Unexpected number of options:", props.partNumberOptions.length);
       }
+    } else {
+      console.log("🔄 No partNumberOptions provided, resetting to manual configuration");
     }
   }, [props.partNumberOptions]);
 
@@ -174,6 +230,18 @@ function Filterbox(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     
+    console.log("🚀 handleSubmit called");
+    console.log("🚀 partNumberOptions.length:", props.partNumberOptions.length);
+    console.log("🚀 Selected values:", {
+      diameter: selectedDiameter,
+      length: selectedLength,
+      tubing: selectedTubing,
+      mesh: selectedMesh,
+      filling: selectedFilling,
+      liquid: selectedLiquid,
+      load: selectedLoad
+    });
+    
     // If we have pre-populated options from API, combine user selections with API options
     if (props.partNumberOptions.length >= 4) {
       const userSelections = [];
@@ -192,15 +260,31 @@ function Filterbox(props) {
         if (tubingOption) userSelections.push(tubingOption);
       }
       
-      // Combine user selections with pre-populated API options
-      const lastFourOptions = props.partNumberOptions.length === 7 
-        ? props.partNumberOptions.slice(3) 
-        : props.partNumberOptions.slice(-4);
+      // Get the last 4 options from API (these are already set in the component state)
+      const lastFourOptions = [];
+      if (selectedMesh) {
+        const meshOption = props.partNumberOptions.find(o => o.id === parseInt(selectedMesh));
+        if (meshOption) lastFourOptions.push(meshOption);
+      }
+      if (selectedFilling) {
+        const fillingOption = props.partNumberOptions.find(o => o.id === parseInt(selectedFilling));
+        if (fillingOption) lastFourOptions.push(fillingOption);
+      }
+      if (selectedLiquid) {
+        const liquidOption = props.partNumberOptions.find(o => o.id === parseInt(selectedLiquid));
+        if (liquidOption) lastFourOptions.push(liquidOption);
+      }
+      if (selectedLoad) {
+        const loadOption = props.partNumberOptions.find(o => o.id === parseInt(selectedLoad));
+        if (loadOption) lastFourOptions.push(loadOption);
+      }
       
       const finalConfiguration = [...userSelections, ...lastFourOptions];
+      console.log("🚀 Final configuration:", finalConfiguration);
       props.setGenerateConfiguration(finalConfiguration);
     } else {
       // Standard workflow - use formData as is
+      console.log("🚀 Using standard workflow with formData:", formData);
       props.setGenerateConfiguration(formData);
     }
   };
@@ -250,7 +334,9 @@ function Filterbox(props) {
   };
 
   const confirmRestart = () => {
-    // Reset all states
+    console.log("🔄 Resetting FilterBox to initial state");
+    
+    // Reset all selection states
     setSelectedDiameter("");
     setSelectedLength("");
     setSelectedTubing("");
@@ -259,6 +345,7 @@ function Filterbox(props) {
     setSelectedLiquid("");
     setSelectedLoad("");
     
+    // Reset disable states to initial configuration
     setDiameterDisabled(false);
     setLengthDisabled(true);
     setTubingDisabled(true);
@@ -268,8 +355,21 @@ function Filterbox(props) {
     setFillingDisabled(true);
     setButtonDisabled(true);
     
+    // Clear form data and MLFB
     setFormData([]);
     setMLFBArray([]);
+    
+    // Clear parent MLFB array
+    if (props.setMLFBArray) {
+      props.setMLFBArray([]);
+    }
+    
+    // Clear parent part number options
+    if (props.setPartNumberOptions) {
+      props.setPartNumberOptions([]);
+    }
+    
+    // Close dialog
     setShowConfirmDialog(false);
   };
 
@@ -516,9 +616,23 @@ function Filterbox(props) {
                 </SelectTrigger>
                 <SelectContent>
                   {props.partNumberOptions.length >= 4 ? (
-                    <SelectItem value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.id?.toString()}>
-                      {props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.name}
-                    </SelectItem>
+                    // Show the pre-selected option plus all available options
+                    <>
+                      <SelectItem 
+                        value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.id?.toString()}
+                        className="font-semibold bg-muted/50"
+                      >
+                        {props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 3 : 0]?.name} (Current)
+                      </SelectItem>
+                      <div className="border-t my-1" />
+                      {originalOptions
+                        .filter((option) => option.groupCode === "11")
+                        .map((option) => (
+                          <SelectItem key={option.code} value={option.id.toString()}>
+                            {option.code} - {option.name}
+                          </SelectItem>
+                        ))}
+                    </>
                   ) : (
                     originalOptions
                       .filter((option) => option.groupCode === "11")
@@ -555,12 +669,26 @@ function Filterbox(props) {
                 </SelectTrigger>
                 <SelectContent>
                   {props.partNumberOptions.length >= 4 ? (
-                    <SelectItem value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.id?.toString()}>
-                      {props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.name}
-                    </SelectItem>
+                    // Show the pre-selected option plus all available options
+                    <>
+                      <SelectItem 
+                        value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.id?.toString()}
+                        className="font-semibold bg-muted/50"
+                      >
+                        {props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 4 : 1]?.name} (Current)
+                      </SelectItem>
+                      <div className="border-t my-1" />
+                      {originalOptions
+                        .filter((option) => option.groupCode === "12" || option.groupCode === "A")
+                        .map((option) => (
+                          <SelectItem key={option.code} value={option.id.toString()}>
+                            {option.code} - {option.name}
+                          </SelectItem>
+                        ))}
+                    </>
                   ) : (
                     originalOptions
-                      .filter((option) => option.groupCode === "A")
+                      .filter((option) => option.groupCode === "12" || option.groupCode === "A")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
                           {option.code} - {option.name}
@@ -594,12 +722,26 @@ function Filterbox(props) {
                 </SelectTrigger>
                 <SelectContent>
                   {props.partNumberOptions.length >= 4 ? (
-                    <SelectItem value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.id?.toString()}>
-                      {props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.name}
-                    </SelectItem>
+                    // Show the pre-selected option plus all available options
+                    <>
+                      <SelectItem 
+                        value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.id?.toString()}
+                        className="font-semibold bg-muted/50"
+                      >
+                        {props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 5 : 2]?.name} (Current)
+                      </SelectItem>
+                      <div className="border-t my-1" />
+                      {originalOptions
+                        .filter((option) => option.groupCode === "13" || option.groupCode === "B")
+                        .map((option) => (
+                          <SelectItem key={option.code} value={option.id.toString()}>
+                            {option.code} - {option.name}
+                          </SelectItem>
+                        ))}
+                    </>
                   ) : (
                     originalOptions
-                      .filter((option) => option.groupCode === "B")
+                      .filter((option) => option.groupCode === "13" || option.groupCode === "B")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
                           {option.code} - {option.name}
@@ -633,12 +775,26 @@ function Filterbox(props) {
                 </SelectTrigger>
                 <SelectContent>
                   {props.partNumberOptions.length >= 4 ? (
-                    <SelectItem value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.id?.toString()}>
-                      {props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.name}
-                    </SelectItem>
+                    // Show the pre-selected option plus all available options
+                    <>
+                      <SelectItem 
+                        value={props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.id?.toString()}
+                        className="font-semibold bg-muted/50"
+                      >
+                        {props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.code} - {props.partNumberOptions[props.partNumberOptions.length === 7 ? 6 : 3]?.name} (Current)
+                      </SelectItem>
+                      <div className="border-t my-1" />
+                      {originalOptions
+                        .filter((option) => option.groupCode === "14" || option.groupCode === "C")
+                        .map((option) => (
+                          <SelectItem key={option.code} value={option.id.toString()}>
+                            {option.code} - {option.name}
+                          </SelectItem>
+                        ))}
+                    </>
                   ) : (
                     originalOptions
-                      .filter((option) => option.groupCode === "C")
+                      .filter((option) => option.groupCode === "14" || option.groupCode === "C")
                       .map((option) => (
                         <SelectItem key={option.code} value={option.id.toString()}>
                           {option.code} - {option.name}

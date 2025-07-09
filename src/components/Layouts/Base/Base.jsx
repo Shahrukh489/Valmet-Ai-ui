@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import NavigationBar from "./NavigationBar/NavigationBar";
 import LoginPage from "../../../Pages/Login/LoginPage";
 
-import "react-toastify/dist/ReactToastify.css";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 
 function Base({ children, className, hideNavbar }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    let user = localStorage.getItem("user");
+    // Check both localStorage (remember me) and sessionStorage (session only)
+    let user = localStorage.getItem("user") || sessionStorage.getItem("user");
     if (user) {
       console.log("User exists in storage");
       setIsAuthenticated(true);

@@ -1,5 +1,5 @@
 import { Plus, Package } from "lucide-react";
-import { toast } from "react-toastify";
+import { showToast } from "../../lib/toast-utils";
 import { useStateValue } from "../../Redux/stateProvider";
 import { Link } from "react-router-dom";
 
@@ -24,7 +24,7 @@ function SparePartListItem(props) {
 
   const handleAddtoBasket = () => {
     addToBasket();
-    toast.success(`Added ${props.name} to Cart`, { position: "bottom-right" });
+    showToast.cart(props.name);
   };
 
   let USDollar = new Intl.NumberFormat("en-US", {
